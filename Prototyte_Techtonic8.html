@@ -1,0 +1,3254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project NEXT · TrendScape India · Unilever HUL</title>
+<style>
+  /* ---------- Design tokens (India theme) ---------- */
+  :root {
+    --bg: #fdf9f1;                 /* warm ivory */
+    --surface: #ffffff;
+    --surface-2: #fbf6ea;
+    --border: #ecdfc7;
+    --border-strong: #d8c8a4;
+    --text: #1f1810;
+    --text-dim: #5a4b34;
+    --text-mute: #8f7d5f;
+
+    --brand: #FF6B1A;              /* deep saffron */
+    --brand-2: #E55A00;
+    --brand-soft: #fff2e5;
+
+    --green: #0F8B3E;              /* India green */
+    --green-soft: #e2f5e9;
+
+    --navy: #14213D;               /* Ashoka navy */
+    --gold: #E4A11B;               /* turmeric */
+    --gold-soft: #fff2d1;
+    --sindoor: #C1272D;            /* sindoor red */
+    --sindoor-soft: #fbe4e5;
+
+    --ok: var(--green);
+    --ok-soft: var(--green-soft);
+    --warn: var(--gold);
+    --warn-soft: var(--gold-soft);
+    --risk: var(--sindoor);
+    --risk-soft: var(--sindoor-soft);
+
+    /* signal-type colours (India festival palette) */
+    --c-weather:  #FF6A3D;
+    --c-sports:   #0F8B3E;
+    --c-festival: #C1272D;
+    --c-prices:   #E4A11B;
+    --c-news:     #6b7280;
+    --c-social:   #7c3aed;
+    --c-monsoon:  #0284c7;
+    --c-aqi:      #4b3a1e;
+
+    --shadow-sm: 0 1px 2px rgba(31,24,16,.05), 0 1px 3px rgba(31,24,16,.04);
+    --shadow-md: 0 4px 14px rgba(31,24,16,.08), 0 2px 6px rgba(31,24,16,.05);
+    --radius: 12px;
+    --radius-lg: 16px;
+    --sidebar-w: 244px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle rangoli-inspired background pattern */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,107,26,.04) 0, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(15,139,62,.04) 0, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(228,161,27,.03) 0, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  a { color: inherit; text-decoration: none; }
+  input, select, textarea { font-family: inherit; }
+
+  /* ---------- Layout ---------- */
+  .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+  .sidebar {
+    width: var(--sidebar-w);
+    background: linear-gradient(180deg, #14213D 0%, #0d1729 100%);
+    color: #d8dbe8;
+    padding: 20px 14px;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto; flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 4px;
+    position: relative;
+  }
+  /* Ashoka chakra motif on sidebar */
+  .sidebar::before {
+    content: ''; position: absolute; right: -60px; bottom: 20px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,26,.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    padding: 6px 8px 18px; margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    position: relative;
+  }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: white;
+    display: grid; place-items: center;
+    position: relative; flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.15);
+  }
+  .brand-mark svg { width: 30px; height: 30px; }
+  .brand-text { color: white; font-weight: 700; font-size: 15px; letter-spacing: 0.2px; }
+  .brand-sub { color: #FF9933; font-size: 11px; margin-top: 1px; font-weight: 600; letter-spacing: 0.4px; }
+
+  .nav-group-label {
+    text-transform: uppercase; font-size: 10px; letter-spacing: 1px;
+    color: #FF9933; padding: 12px 10px 4px; font-weight: 700;
+    opacity: .85;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 8px; color: #c9ceda;
+    font-size: 13px; cursor: pointer; transition: background .15s, color .15s;
+    width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.06); color: white; }
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(255,107,26,.20), rgba(255,107,26,.05));
+    color: white;
+    box-shadow: inset 3px 0 0 var(--brand);
+  }
+  .nav-item.active .nav-icon { color: var(--brand); }
+  .nav-icon { width: 18px; height: 18px; display: grid; place-items: center; }
+  .nav-pill {
+    margin-left: auto; background: var(--sindoor); color: white;
+    font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;
+  }
+  .nav-pill.warn { background: var(--gold); color: #4a3400; }
+  .nav-pill.brand { background: var(--brand); }
+  .nav-pill.ok    { background: var(--green); }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+  /* ---------- Topbar with tricolor stripe ---------- */
+  .tricolor {
+    height: 4px;
+    background: linear-gradient(90deg,
+      #FF9933 0%, #FF9933 33.3%,
+      #ffffff 33.3%, #ffffff 66.6%,
+      #138808 66.6%, #138808 100%);
+    position: sticky; top: 0; z-index: 21;
+  }
+  .tricolor::after {
+    content: '';
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white;
+    border: 1px solid #000080;
+    margin-top: -8px;
+    background-image: radial-gradient(circle, #000080 2px, transparent 2px),
+      conic-gradient(from 0deg, transparent 0deg, transparent 15deg, #000080 15deg, #000080 16deg,
+        transparent 16deg, transparent 30deg, #000080 30deg, #000080 31deg);
+    background-size: 100% 100%;
+    display: none; /* subtle · hide chakra badge for cleanliness */
+  }
+  .topbar {
+    height: 60px; background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 14px;
+    position: sticky; top: 4px; z-index: 20;
+  }
+  .top-title { font-weight: 700; font-size: 15px; color: var(--navy); }
+  .top-crumb { color: var(--text-mute); font-size: 12px; margin-top: 1px; }
+  .top-search {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border-radius: 8px;
+    padding: 8px 12px; width: 260px; max-width: 30vw;
+    border: 1px solid transparent;
+  }
+  .top-search:focus-within { border-color: var(--brand); background: white; }
+  .top-search { position: relative; }
+  .top-search input {
+    border: none; background: transparent; outline: none; width: 100%;
+    font-size: 13px; color: var(--text);
+  }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ---------- Search results dropdown ---------- */
+  .search-results {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    background: white; border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: var(--shadow-md);
+    max-height: 360px; overflow-y: auto; z-index: 30;
+    display: none;
+  }
+  .search-results.open { display: block; }
+  .search-result-group { padding: 8px 0; }
+  .search-result-group + .search-result-group { border-top: 1px solid var(--border); }
+  .search-result-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .6px;
+    color: var(--text-mute); font-weight: 700; padding: 4px 14px;
+  }
+  .search-result-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; cursor: pointer;
+  }
+  .search-result-item:hover { background: var(--surface-2); }
+  .search-result-title { font-size: 12.5px; font-weight: 700; color: var(--navy); }
+  .search-result-meta { font-size: 11px; color: var(--text-mute); }
+  .search-empty { padding: 16px; text-align: center; color: var(--text-mute); font-size: 12.5px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: grid; place-items: center; color: var(--text-dim);
+    position: relative; background: var(--bg);
+  }
+  .icon-btn:hover { background: var(--brand-soft); color: var(--brand); }
+  .icon-btn .dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 7px; height: 7px; border-radius: 50%; background: var(--sindoor);
+    border: 2px solid white;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--gold));
+    color: white; display: grid; place-items: center;
+    font-weight: 700; font-size: 12px;
+    box-shadow: 0 0 0 2px rgba(255,107,26,.15);
+  }
+
+  /* ---------- Content ---------- */
+  .content { padding: 24px; flex: 1; min-width: 0; }
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .page-title {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.3px; margin: 0;
+    color: var(--navy);
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .page-sub { color: var(--text-dim); margin: 4px 0 0; font-size: 13px; max-width: 720px; }
+  .badge-live {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-soft); color: var(--green);
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px;
+  }
+  .badge-live::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+    animation: pulse 1.6s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(15,139,62,.5); }
+    70% { box-shadow: 0 0 0 6px rgba(15,139,62,0); }
+    100% { box-shadow: 0 0 0 0 rgba(15,139,62,0); }
+  }
+  .badge-india {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+    background: linear-gradient(90deg,#fff2e5,#e2f5e9);
+    color: var(--navy);
+    border: 1px solid var(--border);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    background: white; color: var(--text); border: 1px solid var(--border-strong);
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn-primary {
+    background: var(--brand); color: white; border-color: var(--brand);
+  }
+  .btn-primary:hover { background: var(--brand-2); border-color: var(--brand-2); }
+  .btn-ok { background: var(--green); color: white; border-color: var(--green); }
+  .btn-ok:hover { filter: brightness(0.95); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
+  .btn-ghost:hover { background: var(--bg); color: var(--text); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 700; margin: 0;
+    display: flex; align-items: center; gap: 8px;
+    color: var(--navy);
+  }
+  .card-sub { font-size: 12px; color: var(--text-mute); margin: 2px 0 0; }
+  .card-tools { display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- Grid ---------- */
+  .grid { display: grid; gap: 16px; }
+  .g-4 { grid-template-columns: repeat(4, 1fr); }
+  .g-3 { grid-template-columns: repeat(3, 1fr); }
+  .g-2 { grid-template-columns: repeat(2, 1fr); }
+  .g-12-8 { grid-template-columns: 1fr 2fr; }
+  .g-8-4 { grid-template-columns: 2fr 1fr; }
+  .g-fill-3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
+  /* ---------- KPI ---------- */
+  .kpi {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 6px;
+    box-shadow: var(--shadow-sm);
+    position: relative; overflow: hidden;
+  }
+  .kpi::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #FF9933 0%, #FF9933 33%, white 33%, white 66%, #138808 66%);
+    opacity: .35;
+  }
+  .kpi-label {
+    text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;
+    color: var(--text-mute); font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--navy); }
+  .kpi-delta {
+    font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.down { color: var(--sindoor); }
+  .kpi-spark { margin-top: 6px; height: 30px; width: 100%; }
+
+  /* ---------- Chips / tags ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 12px;
+    font-size: 11px; font-weight: 700;
+    background: var(--bg); color: var(--text-dim);
+  }
+  .chip.brand { background: var(--brand-soft); color: var(--brand-2); }
+  .chip.ok { background: var(--ok-soft); color: var(--ok); }
+  .chip.warn { background: var(--warn-soft); color: #7a4d00; }
+  .chip.risk { background: var(--risk-soft); color: var(--risk); }
+  .chip.navy { background: rgba(20,33,61,.08); color: var(--navy); }
+  .chip .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+  }
+
+  /* ---------- Table ---------- */
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th, .table td {
+    text-align: left; padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table th {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-mute); font-weight: 700; background: var(--surface-2);
+  }
+  .table tbody tr:hover { background: var(--surface-2); cursor: pointer; }
+  .table tbody tr:last-child td { border-bottom: none; }
+
+  /* ---------- Sub-nav tabs ---------- */
+  .tabs {
+    display: flex; gap: 4px; background: white; border: 1px solid var(--border);
+    padding: 5px; border-radius: 12px; margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+    color: var(--text-dim); white-space: nowrap; display: flex; align-items: center; gap: 8px;
+  }
+  .tab:hover { color: var(--text); background: var(--surface-2); }
+  .tab.active { background: var(--brand); color: white; }
+  .tab .num {
+    background: rgba(255,255,255,.28); color: inherit;
+    font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 700;
+  }
+  .tab:not(.active) .num { background: var(--bg); color: var(--text-mute); }
+
+  /* ---------- India Map ---------- */
+  .map-wrap {
+    background: linear-gradient(180deg, #14213D 0%, #0a132a 100%);
+    border-radius: var(--radius);
+    height: 460px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-svg { width: 100%; height: 100%; display: block; }
+  .map-legend {
+    position: absolute; bottom: 12px; left: 12px;
+    background: rgba(10,15,35,.88); backdrop-filter: blur(4px);
+    padding: 10px 12px; border-radius: 10px;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    color: white; font-size: 11px;
+    border: 1px solid rgba(255,255,255,.08);
+    max-width: 60%;
+  }
+  .map-legend-item { display: flex; align-items: center; gap: 6px; }
+  .map-legend-item .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .map-filters {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+    max-width: 70%;
+  }
+  .map-filter {
+    padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+    background: rgba(255,255,255,.10); color: white; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.15);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .map-filter.off { opacity: .38; }
+  .map-filter .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .map-dot { cursor: pointer; transition: r .2s; }
+  .map-dot:hover { r: 1.6; }
+  .map-ping {
+    animation: mapPing 2.4s ease-out infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  @keyframes mapPing {
+    0% { r: 0.6; opacity: .8; }
+    100% { r: 4; opacity: 0; }
+  }
+  .map-callout {
+    position: absolute;
+    background: white;
+    padding: 12px 14px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.24);
+    font-size: 12px; max-width: 260px;
+    pointer-events: none; z-index: 5;
+  }
+  .map-callout .cb-title { font-weight: 700; font-size: 13px; margin-bottom: 3px; color: var(--navy); }
+  .map-callout .cb-meta { color: var(--text-mute); font-size: 11px; margin-bottom: 6px; }
+  .map-city-label {
+    fill: rgba(255,255,255,.55); font-size: 1.2px; font-weight: 600;
+    pointer-events: none;
+  }
+  .map-city-dot { fill: rgba(255,255,255,.35); }
+  .map-title-overlay {
+    position: absolute; top: 12px; left: 12px;
+    color: white;
+    background: rgba(20,33,61,.55); backdrop-filter: blur(4px);
+    padding: 6px 12px; border-radius: 10px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
+  /* ---------- Signal Explorer (interactive, replaces the old map) ---------- */
+  .sig-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .sig-filter {
+    padding: 6px 12px; border-radius: 12px; font-size: 11.5px; font-weight: 700;
+    background: var(--bg); color: var(--text-dim); cursor: pointer;
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; gap: 6px; transition: all .15s;
+  }
+  .sig-filter .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .sig-filter.off { opacity: .4; }
+  .sig-filter:not(.off):hover { transform: translateY(-1px); }
+  .sig-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .sig-bar-row { display: grid; grid-template-columns: 76px 1fr 34px; align-items: center; gap: 10px; font-size: 12px; }
+  .sig-bar-track { height: 10px; background: var(--bg); border-radius: 6px; overflow: hidden; position: relative; }
+  .sig-bar-fill { height: 100%; border-radius: 6px; transition: width .3s ease; cursor: pointer; }
+  .sig-bar-fill:hover { filter: brightness(1.1); }
+  .sig-list { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+  .sig-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; background: var(--surface-2);
+    border-radius: 10px; cursor: pointer; transition: background .15s;
+  }
+  .sig-item:hover { background: var(--brand-soft); }
+  .sig-icon {
+    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+    display: grid; place-items: center; color: white;
+  }
+  .sig-empty { padding: 24px; text-align: center; color: var(--text-mute); font-size: 13px; }
+
+  /* ---------- Interactive line / metric charts ---------- */
+  .trend-legend { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .trend-toggle {
+    padding: 6px 12px; border-radius: 12px; font-size: 11.5px; font-weight: 700;
+    background: var(--bg); color: var(--text-dim); cursor: pointer;
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; gap: 6px; transition: all .15s;
+  }
+  .trend-toggle .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .trend-toggle.off { opacity: .35; }
+  .trend-chart-wrap { position: relative; }
+  .trend-tooltip {
+    position: absolute; pointer-events: none;
+    background: var(--navy); color: white;
+    padding: 8px 10px; border-radius: 8px; font-size: 11.5px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+    transform: translate(-50%, -110%);
+    white-space: nowrap; z-index: 5; opacity: 0; transition: opacity .1s;
+  }
+  .trend-tooltip.show { opacity: 1; }
+  .trend-dot { cursor: pointer; }
+  .metric-toggle-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .metric-bars { display: flex; align-items: flex-end; gap: 14px; height: 220px; padding: 6px 4px 0; }
+  .metric-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+  .metric-bar { width: 100%; max-width: 46px; border-radius: 8px 8px 3px 3px; position: relative; cursor: pointer; transition: filter .15s; }
+  .metric-bar:hover { filter: brightness(1.1); }
+  .metric-bar-value { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; color: var(--navy); white-space: nowrap; }
+  .metric-bar-label { font-size: 10.5px; color: var(--text-mute); text-align: center; line-height: 1.3; max-width: 70px; }
+
+  /* ---------- Creative Twin video widget ---------- */
+  .video-wrap {
+    background: linear-gradient(180deg, #14213D 0%, #0a132a 100%);
+    border-radius: var(--radius); overflow: hidden; position: relative;
+  }
+  .video-canvas { width: 100%; height: 320px; display: block; cursor: pointer; }
+  .video-controls {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: rgba(10,15,35,.9);
+  }
+  .video-play-btn {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--brand);
+    display: grid; place-items: center; color: white; flex-shrink: 0;
+  }
+  .video-scrub {
+    flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,.25); outline: none; cursor: pointer;
+  }
+  .video-scrub::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%;
+    background: var(--brand); cursor: pointer; box-shadow: 0 0 0 3px rgba(255,107,26,.25);
+  }
+  .video-time { color: rgba(255,255,255,.75); font-size: 11px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .video-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: rgba(20,33,61,.6); backdrop-filter: blur(4px);
+    color: white; font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    padding: 6px 12px; border-radius: 10px; text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .video-rendering {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--green-soft); color: var(--green);
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ---------- Insight row ---------- */
+  .insight-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; background: var(--surface-2);
+    border-radius: 10px; margin-bottom: 8px;
+  }
+  .insight-row:last-child { margin-bottom: 0; }
+  .insight-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: grid; place-items: center; color: white; flex-shrink: 0;
+    font-size: 14px;
+  }
+  .insight-body { flex: 1; min-width: 0; }
+  .insight-title { font-weight: 700; font-size: 13px; margin: 0 0 2px; }
+  .insight-meta { font-size: 11.5px; color: var(--text-mute); }
+  .insight-value { font-weight: 800; color: var(--brand); font-size: 13px; text-align: right; white-space: nowrap; }
+
+  /* ---------- Fused card ---------- */
+  .fused-card {
+    background: linear-gradient(135deg, #fff2e5 0%, #e2f5e9 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    position: relative; overflow: hidden;
+  }
+  .fused-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, #FF9933 0%, #FF9933 33%, white 33%, white 66%, #138808 66%);
+  }
+  .fused-conf {
+    background: white; border-radius: var(--radius); padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px; margin: 14px 0;
+    border: 1px solid var(--border);
+  }
+  .conf-ring {
+    width: 68px; height: 68px; position: relative; flex-shrink: 0;
+  }
+  .conf-ring svg { transform: rotate(-90deg); }
+  .conf-ring .conf-num {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: 16px; font-weight: 800; color: var(--brand-2);
+  }
+  .fused-formula {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .formula-token {
+    padding: 4px 10px; background: white; border-radius: 8px;
+    font-size: 11.5px; font-weight: 700; color: var(--brand-2);
+    border: 1px solid var(--border);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .formula-op { color: var(--text-dim); font-weight: 700; }
+
+  /* ---------- Approval action bar ---------- */
+  .action-bar {
+    display: flex; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--border-strong);
+    align-items: center; flex-wrap: wrap;
+  }
+
+  /* ---------- Timeline / Roadmap ---------- */
+  .timeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .tl-item {
+    background: white; border-radius: 12px; border: 1px solid var(--border);
+    padding: 16px; position: relative;
+  }
+  .tl-phase { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-mute); font-weight: 700; }
+  .tl-cost { font-size: 22px; font-weight: 800; margin: 4px 0; color: var(--brand-2); }
+  .tl-note { font-size: 12px; color: var(--text-dim); }
+
+  /* ---------- Approval queue rows ---------- */
+  .queue-row {
+    display: flex; padding: 16px 18px; gap: 16px;
+    border-bottom: 1px solid var(--border); align-items: center;
+  }
+  .queue-row:last-child { border-bottom: none; }
+  .queue-priority {
+    width: 3px; height: 44px; border-radius: 3px; flex-shrink: 0;
+  }
+  .queue-body { flex: 1; min-width: 0; }
+  .queue-title { font-weight: 700; font-size: 14px; margin: 0 0 3px; }
+  .queue-meta {
+    font-size: 12px; color: var(--text-mute);
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .queue-scores { display: flex; gap: 20px; flex-shrink: 0; }
+  .score-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .score-label { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+  .score-value { font-size: 15px; font-weight: 800; }
+
+  /* ---------- Portfolio grid ---------- */
+  .prod-card {
+    background: white; border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; display: flex; flex-direction: column; gap: 10px;
+    box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s;
+    cursor: pointer;
+  }
+  .prod-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .prod-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .prod-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: grid; place-items: center; color: white;
+  }
+  .prod-stage { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-mute); font-weight: 700; }
+  .prod-name { font-size: 15px; font-weight: 800; margin: 4px 0 2px; color: var(--navy); }
+  .prod-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
+  .prod-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--text-mute); font-weight: 600;
+  }
+
+  /* ---------- Notification panel ---------- */
+  .notif-panel {
+    position: fixed; top: 64px; right: 12px; width: 380px; max-width: 92vw;
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(31,24,16,.18);
+    z-index: 50; overflow: hidden; display: none;
+  }
+  .notif-panel.open { display: block; }
+  .notif-head {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .notif-list { max-height: 400px; overflow-y: auto; }
+  .notif-item {
+    padding: 12px 16px; display: flex; gap: 10px;
+    border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .notif-item:hover { background: var(--surface-2); }
+  .notif-item.unread { background: #fff8ec; }
+  .notif-item.unread .notif-title { font-weight: 700; }
+  .notif-icon {
+    width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center;
+    color: white; flex-shrink: 0;
+  }
+  .notif-title { font-size: 13px; margin: 0 0 2px; color: var(--navy); }
+  .notif-desc { font-size: 12px; color: var(--text-mute); line-height: 1.4; }
+  .notif-time { font-size: 11px; color: var(--text-mute); margin-top: 3px; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(20,33,61,.55); backdrop-filter: blur(4px);
+    z-index: 100; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: white; border-radius: 16px; width: 100%; max-width: 720px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    border-top: 4px solid var(--brand);
+  }
+  .modal-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 22px 12px; border-bottom: 1px solid var(--border);
+  }
+  .modal-title { font-size: 17px; font-weight: 800; margin: 0; color: var(--navy); }
+  .modal-body { padding: 20px 22px; }
+  .modal-foot {
+    padding: 14px 22px; border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+
+  /* ---------- Form ---------- */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--text-dim); }
+  .field input, .field select, .field textarea {
+    padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px;
+    font-size: 13px; background: white; color: var(--text); outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--brand); box-shadow: 0 0 0 3px rgba(255,107,26,.14);
+  }
+
+  /* ---------- Chart bars ---------- */
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding-top: 12px; }
+  .bar {
+    flex: 1; background: linear-gradient(180deg, var(--brand), var(--brand-2));
+    border-radius: 4px 4px 0 0; position: relative;
+    transition: opacity .15s;
+  }
+  .bar:hover { opacity: .85; }
+  .bar-label {
+    position: absolute; bottom: -20px; left: 0; right: 0;
+    text-align: center; font-size: 10px; color: var(--text-mute); font-weight: 600;
+  }
+  .bar-value {
+    position: absolute; top: -18px; left: 0; right: 0;
+    text-align: center; font-size: 10px; font-weight: 700; color: var(--text-dim);
+  }
+
+  /* ---------- Creative Studio ---------- */
+  .variant-card {
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    background: white;
+  }
+  .variant-preview {
+    aspect-ratio: 16/10;
+    display: grid; place-items: center;
+    color: white; font-weight: 800;
+    text-align: center; padding: 20px; font-size: 15px;
+    position: relative;
+  }
+  .variant-info { padding: 12px 14px; }
+  .variant-title { font-size: 13px; font-weight: 700; margin: 0 0 3px; }
+  .variant-meta { font-size: 11px; color: var(--text-mute); }
+  .variant-actions {
+    display: flex; gap: 6px; padding: 10px 14px 12px; border-top: 1px solid var(--border);
+  }
+
+  /* ---------- Signal loop ---------- */
+  .loop-diagram {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    align-items: stretch;
+  }
+  .loop-node {
+    background: white; border: 2px solid var(--border);
+    border-radius: 12px; padding: 14px; text-align: center;
+    position: relative; font-size: 12px;
+  }
+  .loop-node.active { border-color: var(--brand); background: var(--brand-soft); }
+  .loop-node-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--brand); color: white; font-weight: 800; font-size: 11px;
+    display: grid; place-items: center; margin: 0 auto 6px;
+  }
+
+  /* ---------- Festival calendar strip ---------- */
+  .fest-strip {
+    display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
+  }
+  .fest-card {
+    flex: 0 0 200px;
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; background: white;
+    display: flex; flex-direction: column; gap: 6px;
+    position: relative; overflow: hidden;
+  }
+  .fest-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--brand);
+  }
+  .fest-name { font-weight: 800; font-size: 13px; color: var(--navy); }
+  .fest-date { font-size: 11px; color: var(--text-mute); font-weight: 600; }
+  .fest-cats { font-size: 11px; color: var(--text-dim); }
+
+  /* ---------- Utils ---------- */
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .flex-gap { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .mb-md { margin-bottom: 16px; }
+  .mt-md { margin-top: 16px; }
+  .text-sm { font-size: 12px; color: var(--text-dim); }
+  .text-mute { color: var(--text-mute); }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .mobile-toggle { display: none; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1200px) {
+    .g-4 { grid-template-columns: repeat(2, 1fr); }
+    .timeline { grid-template-columns: repeat(2, 1fr); }
+    .g-12-8, .g-8-4 { grid-template-columns: 1fr; }
+    .loop-diagram { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .g-3 { grid-template-columns: 1fr; }
+    .g-2 { grid-template-columns: 1fr; }
+    .sidebar {
+      position: fixed; left: 0; top: 0; z-index: 200;
+      transform: translateX(-100%);
+      transition: transform .25s;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .mobile-toggle { display: grid; }
+    .top-search { display: none; }
+    .queue-scores { gap: 10px; }
+    .score-value { font-size: 13px; }
+  }
+  @media (max-width: 600px) {
+    .g-4 { grid-template-columns: 1fr; }
+    .timeline { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+    .page-title { font-size: 18px; }
+    .queue-row { flex-wrap: wrap; }
+    .queue-scores { width: 100%; justify-content: space-around; }
+  }
+
+  /* SVG icons */
+  .i { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .i-sm { width: 14px; height: 14px; stroke-width: 2; }
+  .i-lg { width: 22px; height: 22px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+
+<!-- ============ SVG Icon defs ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 12 19 5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-brush" viewBox="0 0 24 24"><path d="M4 20c0-3 3-4 5-4l6-6 4 4-6 6c0 2-1 5-4 5s-5-2-5-5z"/><path d="M15 4l4 4"/></symbol>
+    <symbol id="i-broadcast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M6 12a6 6 0 0 1 12 0M3 12a9 9 0 0 1 18 0"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6l8-3z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 12v-2a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 12v2a4 4 0 0 1-4 4H3"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M1 6v16l7-3 8 3 7-3V3l-7 3-8-3-7 3z"/><path d="M8 3v18M16 6v15"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></symbol>
+    <symbol id="i-signal" viewBox="0 0 24 24"><path d="M2 20h4v-4M8 20V12M14 20V8M20 20V4"/></symbol>
+    <symbol id="i-approve" viewBox="0 0 24 24"><path d="M4 12l5 5 11-11"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20 12 12 20l-9-9V3h8l9 9z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9z"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2s7 8 7 13a7 7 0 1 1-14 0c0-5 7-13 7-13z"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5z"/><path d="M3 7l9 5 9-5M12 12v10"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-3-2-5-4-9-1 3-3 4-5 3 0 3-3 5-3 8a5 5 0 0 0 5 5z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.4l2-1.6-2-3.4-2.4.9a7 7 0 0 0-2.4-1.4L13.5 2h-3l-.6 3.1a7 7 0 0 0-2.4 1.4L5.1 5.6l-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .5 0 1 .1 1.4l-2 1.6 2 3.4 2.4-.9a7 7 0 0 0 2.4 1.4l.6 3.1h3l.6-3.1a7 7 0 0 0 2.4-1.4l2.4.9 2-3.4-2-1.6c.1-.4.1-.9.1-1.4z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 2 2 20h20L12 2z"/><path d="M12 9v5M12 17.5v.5"/></symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M20 16a4 4 0 0 0-2-7 6 6 0 0 0-11 2A4 4 0 0 0 6 19"/><path d="M8 19v3M12 21v3M16 19v3"/></symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h17a3 3 0 1 1-3 3M3 16h9a3 3 0 1 1-3 3"/></symbol>
+    <symbol id="i-cricket" viewBox="0 0 24 24"><path d="M4 20l7-7 6 6-3 3-10-2z"/><circle cx="18" cy="6" r="3"/><path d="M11 13l5-5"/></symbol>
+    <symbol id="i-diya" viewBox="0 0 24 24"><path d="M12 2c-1 3 1 5 1 7a2 2 0 1 1-4 0c0-1 1-2 1-4"/><path d="M4 14h16l-2 6H6l-2-6z"/></symbol>
+    <symbol id="i-rupee" viewBox="0 0 24 24"><path d="M6 4h12M6 8h12M9 12h3a4 4 0 0 0 0-8H6M6 12l8 8"/></symbol>
+    <symbol id="i-ashoka" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><g stroke-width="1.2"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M4.9 19.1l14.2-14.2M6.3 3.7l11.4 16.6M17.7 3.7l-11.4 16.6M3.7 6.3l16.6 11.4M3.7 17.7l16.6-11.4"/></g></symbol>
+    <symbol id="i-hair" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0v10h-4v-8a4 4 0 0 0-8 0v8H4z"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2" fill="#14213D"/><g><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M4.9 19.1l14.2-14.2M6.3 3.7l11.4 16.6M17.7 3.7l-11.4 16.6M3.7 6.3l16.6 11.4M3.7 17.7l16.6-11.4"/></g></svg>
+      </div>
+      <div>
+        <div class="brand-text">Project NEXT</div>
+        <div class="brand-sub">HUL · भारत</div>
+      </div>
+    </div>
+
+    <div class="nav-group-label">Overview</div>
+    <button class="nav-item active" data-page="home">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-home"/></svg></span>
+      <span>Command Center</span>
+    </button>
+    <button class="nav-item" data-page="portfolio">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-grid"/></svg></span>
+      <span>AI Portfolio</span>
+    </button>
+
+    <div class="nav-group-label">Sense</div>
+    <button class="nav-item" data-page="trendscape">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-radar"/></svg></span>
+      <span>TrendScape</span>
+      <span class="nav-pill">4</span>
+    </button>
+    <button class="nav-item" data-page="iot">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-signal"/></svg></span>
+      <span>IoT Signal Layer</span>
+    </button>
+
+    <div class="nav-group-label">Decide</div>
+    <button class="nav-item" data-page="scorer">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-target"/></svg></span>
+      <span>Opportunity Scorer</span>
+      <span class="nav-pill warn" id="oppPill">14</span>
+    </button>
+    <button class="nav-item" data-page="forecast">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-cpu"/></svg></span>
+      <span>Forecast Lab</span>
+      <span class="nav-pill ok">Live model</span>
+    </button>
+
+    <div class="nav-group-label">Create &amp; Activate</div>
+    <button class="nav-item" data-page="creative">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-brush"/></svg></span>
+      <span>Creative Twin Studio</span>
+    </button>
+    <button class="nav-item" data-page="activate">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-broadcast"/></svg></span>
+      <span>Localization &amp; Media</span>
+    </button>
+
+    <div class="nav-group-label">Govern &amp; Learn</div>
+    <button class="nav-item" data-page="guardrail">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-shield"/></svg></span>
+      <span>Brand Guardrail</span>
+      <span class="nav-pill brand">3</span>
+    </button>
+    <button class="nav-item" data-page="loop">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-repeat"/></svg></span>
+      <span>Signal Loop</span>
+    </button>
+
+    <div class="nav-group-label" style="margin-top:auto">Account</div>
+    <button class="nav-item">
+      <span class="nav-icon"><svg class="i-sm"><use href="#i-settings"/></svg></span>
+      <span>Settings</span>
+    </button>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="tricolor"></div>
+    <div class="topbar">
+      <button class="icon-btn mobile-toggle" id="menuBtn" aria-label="Menu">
+        <svg class="i"><use href="#i-menu"/></svg>
+      </button>
+      <div>
+        <div class="top-title" id="topTitle">Command Center</div>
+        <div class="top-crumb" id="topCrumb">Project NEXT · India MVP</div>
+      </div>
+      <div class="top-search">
+        <svg class="i-sm" style="color:var(--text-mute)"><use href="#i-search"/></svg>
+        <input placeholder="Search cities, festivals, SKUs…" id="topSearchInput" autocomplete="off" aria-label="Search the dashboard"/>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="top-actions">
+        <span class="badge-india">🇮🇳 India MVP</span>
+        <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+          <svg class="i"><use href="#i-bell"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="avatar" title="Priya M. · HUL Brand Ops">PM</div>
+      </div>
+
+      <div class="notif-panel" id="notifPanel">
+        <div class="notif-head">
+          <div style="font-weight:700;font-size:14px;color:var(--navy)">Notifications</div>
+          <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+      </div>
+    </div>
+
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modalTitle">Recommendation</div>
+        <div class="text-sm text-mute" id="modalSub">Human-in-the-loop approval</div>
+      </div>
+      <button class="icon-btn" onclick="closeModal()" aria-label="Close dialog"><svg class="i"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   MOCK DATA · India-only, grounded in the deck
+   ===================================================== */
+
+const PORTFOLIO = [
+  { key:'trendscape', stage:'SENSE', name:'TrendScape', pri:'P0',
+    desc:'Fuses any world trend (social, weather, news, events) with IoT usage across 4 dashboards; predicts shelf-level shifts.',
+    color:'#FF6B1A', icon:'i-radar', status:'Live · MVP India' },
+  { key:'iot', stage:'SENSE', name:'IoT Signal Layer', pri:'P0',
+    desc:'MQTT adapters on connected packaging, dispensers & shelf sensors turn product use into a live signal.',
+    color:'#0F8B3E', icon:'i-signal', status:'Live · 12 Indian cities' },
+  { key:'guardrail', stage:'GOVERN', name:'Brand Guardrail', pri:'P0',
+    desc:'Compliance / tone / legal-risk agent with a human sign-off gate before anything ships.',
+    color:'#C1272D', icon:'i-shield', status:'Live · HUL India' },
+  { key:'scorer', stage:'DECIDE', name:'Opportunity Scorer', pri:'P0',
+    desc:'Ranks every spike on brand-fit, ROI band and risk; auto-drafts the business case.',
+    color:'#7c3aed', icon:'i-target', status:'Live · HUL India' },
+  { key:'creative', stage:'CREATE', name:'Creative Twin Studio', pri:'P1',
+    desc:'Generative engine drafting on-brand video / copy / image variants within hours.',
+    color:'#E4A11B', icon:'i-brush', status:'Beta · Pilot brands' },
+  { key:'activate', stage:'ACTIVATE', name:'Localization & Media Agent', pri:'P1',
+    desc:'Auto-localizes assets, buys media, triggers IoT-linked dark-store restocking.',
+    color:'#0284c7', icon:'i-broadcast', status:'Beta · India Q-com' },
+  { key:'loop', stage:'LEARN', name:'Signal Loop', pri:'P2',
+    desc:'Real-time attribution feeding outcomes back into forecasting & brand-health models.',
+    color:'#14213D', icon:'i-repeat', status:'Design · Scale phase' },
+];
+
+const PORTFOLIO_METRICS = {
+  trendscape: { impact: 96, ttv: 12, adoption: 91 },
+  iot:        { impact: 82, ttv: 14, adoption: 84 },
+  guardrail:  { impact: 88, ttv: 8,  adoption: 97 },
+  scorer:     { impact: 79, ttv: 10, adoption: 88 },
+  creative:   { impact: 74, ttv: 18, adoption: 62 },
+  activate:   { impact: 71, ttv: 20, adoption: 55 },
+  loop:       { impact: 58, ttv: 26, adoption: 33 },
+};
+
+const SIGNAL_TYPES = [
+  { key:'weather',  label:'Weather',  color:'var(--c-weather)',  icon:'i-sun' },
+  { key:'monsoon',  label:'Monsoon',  color:'var(--c-monsoon)',  icon:'i-cloud-rain' },
+  { key:'aqi',      label:'Air Qty',  color:'var(--c-aqi)',      icon:'i-wind' },
+  { key:'sports',   label:'Cricket',  color:'var(--c-sports)',   icon:'i-cricket' },
+  { key:'festival', label:'Festival', color:'var(--c-festival)', icon:'i-diya' },
+  { key:'prices',   label:'Mandi',    color:'var(--c-prices)',   icon:'i-tag' },
+  { key:'news',     label:'News',     color:'var(--c-news)',     icon:'i-news' },
+  { key:'social',   label:'Social',   color:'var(--c-social)',   icon:'i-chat' },
+];
+
+/*
+   India map coordinates (approximate positions inside a 100×100 viewBox
+   where the India silhouette is drawn).
+   Rough visual placement · Delhi north, Mumbai west-centre, etc.
+*/
+const MAP_DOTS = [
+  // NORTH
+  { id:'d1',  type:'weather',  x:44, y:26, size:2.2, label:'Heatwave · 42°C, Delhi NCR',            city:'Delhi',        state:'DL', region:'North' },
+  { id:'d2',  type:'aqi',      x:44, y:28, size:1.8, label:'AQI spike >320 · Delhi',                city:'Delhi',        state:'DL', region:'North' },
+  { id:'d3',  type:'festival', x:44, y:27, size:2.0, label:'Wedding season · Delhi NCR',            city:'Delhi',        state:'DL', region:'North' },
+  { id:'d4',  type:'weather',  x:39, y:22, size:1.8, label:'Heatwave alert · Punjab · 41°C',        city:'Amritsar',     state:'PB', region:'North' },
+  { id:'d5',  type:'festival', x:39, y:22, size:1.6, label:'Baisakhi run-up',                       city:'Amritsar',     state:'PB', region:'North' },
+  { id:'d6',  type:'prices',   x:52, y:33, size:1.7, label:'Onion mandi price spike · Lucknow',     city:'Lucknow',      state:'UP', region:'North' },
+  { id:'d7',  type:'sports',   x:44, y:26, size:2.4, label:'#IndVAus final trending · 2.3M posts',  city:'Delhi',        state:'DL', region:'North' },
+  { id:'d8',  type:'festival', x:44, y:30, size:1.6, label:'Karva Chauth in 12 days',               city:'Jaipur',       state:'RJ', region:'North' },
+  // WEST
+  { id:'d9',  type:'monsoon',  x:32, y:55, size:2.4, label:'Monsoon onset · Mumbai · 48h',          city:'Mumbai',       state:'MH', region:'West' },
+  { id:'d10', type:'sports',   x:32, y:55, size:2.2, label:'IPL Final at Wankhede · sold out',      city:'Mumbai',       state:'MH', region:'West' },
+  { id:'d11', type:'social',   x:32, y:55, size:1.8, label:'#GRWM Mumbai monsoon frizz · Reels',    city:'Mumbai',       state:'MH', region:'West' },
+  { id:'d12', type:'festival', x:26, y:52, size:1.7, label:'Navratri garba prep · Ahmedabad',       city:'Ahmedabad',    state:'GJ', region:'West' },
+  { id:'d13', type:'festival', x:33, y:57, size:1.8, label:'Ganesh Chaturthi processions · Pune',   city:'Pune',         state:'MH', region:'West' },
+  // SOUTH
+  { id:'d14', type:'weather',  x:42, y:78, size:2.0, label:'Coastal heat + humidity 78% · Chennai', city:'Chennai',      state:'TN', region:'South' },
+  { id:'d15', type:'social',   x:38, y:71, size:2.0, label:'Bengaluru startup layoffs trending',    city:'Bengaluru',    state:'KA', region:'South' },
+  { id:'d16', type:'monsoon',  x:32, y:80, size:1.9, label:'NE monsoon early onset · Kerala',       city:'Kochi',        state:'KL', region:'South' },
+  { id:'d17', type:'festival', x:32, y:80, size:2.0, label:'Onam Sadhya week',                       city:'Kochi',        state:'KL', region:'South' },
+  { id:'d18', type:'sports',   x:38, y:71, size:1.6, label:'RCB home fixture · Chinnaswamy',        city:'Bengaluru',    state:'KA', region:'South' },
+  { id:'d19', type:'weather',  x:42, y:64, size:1.6, label:'Pollen surge · Hyderabad',              city:'Hyderabad',    state:'TS', region:'South' },
+  // EAST
+  { id:'d20', type:'festival', x:60, y:45, size:2.4, label:'Durga Puja pandal season · Kolkata',    city:'Kolkata',      state:'WB', region:'East' },
+  { id:'d21', type:'news',     x:60, y:45, size:1.5, label:'Cyclone advisory · Bay of Bengal',      city:'Kolkata',      state:'WB', region:'East' },
+  { id:'d22', type:'prices',   x:58, y:47, size:1.5, label:'Palm-oil futures rally · East India',   city:'Kolkata',      state:'WB', region:'East' },
+  // NORTHEAST
+  { id:'d23', type:'monsoon',  x:74, y:32, size:1.6, label:'Heavy rainfall · Guwahati',             city:'Guwahati',     state:'AS', region:'NE'   },
+  { id:'d24', type:'festival', x:74, y:32, size:1.4, label:'Bihu week',                             city:'Guwahati',     state:'AS', region:'NE'   },
+  // CENTRAL
+  { id:'d25', type:'weather',  x:42, y:44, size:1.6, label:'Dust storm · Bhopal',                   city:'Bhopal',       state:'MP', region:'Central' },
+  { id:'d26', type:'social',   x:44, y:26, size:1.4, label:'"Morning shed" skincare trend spiking', city:'Delhi',        state:'DL', region:'North' },
+  { id:'d27', type:'news',     x:32, y:55, size:1.3, label:'BMC water-cut advisory · Mumbai',       city:'Mumbai',       state:'MH', region:'West' },
+];
+
+const DERIVED = [
+  { id:'t1', trend:'Heatwave, Delhi NCR (42°C)',        cat:'Antiperspirant · Rexona',       change:+22, lead:'5-day', conf:93, city:'Delhi',     color:'var(--c-weather)' },
+  { id:'t2', trend:'IPL Final, Mumbai',                  cat:'Chilled beverages · Kissan',    change:+24, lead:'2-day', conf:88, city:'Mumbai',    color:'var(--c-sports)' },
+  { id:'t3', trend:'Wedding season, Delhi NCR',          cat:'Haircare gifting · Sunsilk',    change:+17, lead:'7-day', conf:84, city:'Delhi',     color:'var(--c-festival)' },
+  { id:'t4', trend:'Monsoon onset, Mumbai',              cat:'Fabric wash · Surf Excel/Rin',  change:+16, lead:'3-day', conf:87, city:'Mumbai',    color:'var(--c-monsoon)' },
+  { id:'t5', trend:'AQI spike >320, Delhi',              cat:'Hygiene · Lifebuoy / Dove',     change:+14, lead:'2-day', conf:81, city:'Delhi',     color:'var(--c-aqi)' },
+  { id:'t6', trend:'Durga Puja pandal season, Kolkata',  cat:'Gifting · Dove / Ponds',        change:+21, lead:'10-day',conf:86, city:'Kolkata',   color:'var(--c-festival)' },
+  { id:'t7', trend:'Onam Sadhya week, Kerala',           cat:'Cooking · Kissan / Knorr',      change:+18, lead:'8-day', conf:83, city:'Kochi',     color:'var(--c-festival)' },
+  { id:'t8', trend:'Navratri garba prep, Ahmedabad',     cat:'Personal care · Axe / Sure',    change:+15, lead:'9-day', conf:79, city:'Ahmedabad', color:'var(--c-festival)' },
+  { id:'t9', trend:'Ganesh Chaturthi, Pune',             cat:'Home care · Vim / Cif',         change:+19, lead:'12-day',conf:82, city:'Pune',      color:'var(--c-festival)' },
+  { id:'t10',trend:'Onion mandi price spike, Lucknow',   cat:'Cooking oils',                  change:-7,  lead:'3-day', conf:74, city:'Lucknow',   color:'var(--c-prices)' },
+  { id:'t11',trend:'Palm-oil futures rally',             cat:'Bar soaps · Dove / Lux',        change:-4,  lead:'14-day',conf:72, city:'Kolkata',   color:'var(--c-prices)' },
+  { id:'t12',trend:'Coastal humidity 78%, Chennai',      cat:'Anti-frizz · Sunsilk / Dove',   change:+13, lead:'3-day', conf:80, city:'Chennai',   color:'var(--c-weather)' },
+  { id:'t13',trend:'BMC water-cut advisory, Mumbai',     cat:'Rinse-lite · Comfort One Rinse',change:+12, lead:'2-day', conf:78, city:'Mumbai',    color:'var(--c-news)' },
+  { id:'t14',trend:'"Morning shed" TikTok trend',        cat:'Bodywash · Dove serum',         change:+11, lead:'2-day', conf:76, city:'Delhi',     color:'var(--c-social)' },
+  { id:'t15',trend:'Diwali cleaning rush, pan-India',    cat:'Home care · Cif / Vim / Domex', change:+27, lead:'6-day', conf:90, city:'Bengaluru', color:'var(--c-festival)' },
+  { id:'t16',trend:'Karva Chauth run-up, North India',   cat:'Beauty · Lakmé / Ponds / Sunsilk',change:+19, lead:'4-day', conf:85, city:'Jaipur',    color:'var(--c-festival)' },
+  { id:'t17',trend:'RCB home fixture, Bengaluru',        cat:'Snacks · Kissan / Lipton',      change:+15, lead:'1-day', conf:77, city:'Bengaluru', color:'var(--c-sports)' },
+  { id:'t18',trend:'Cyclone advisory, Bay of Bengal',    cat:'Emergency staples · Knorr',     change:+9,  lead:'2-day', conf:71, city:'Kolkata',   color:'var(--c-news)' },
+  { id:'t19',trend:'Pollen surge, Hyderabad',            cat:'Skincare · Pond\'s / Dove',     change:+10, lead:'3-day', conf:73, city:'Hyderabad', color:'var(--c-weather)' },
+  { id:'t20',trend:'Bihu week, Assam',                   cat:'Regional gifting · Dove',       change:+13, lead:'6-day', conf:75, city:'Guwahati',  color:'var(--c-festival)' },
+  { id:'t21',trend:'Startup layoffs chatter, Bengaluru', cat:'Value packs · Wheel / Sunlight',change:+8,  lead:'5-day', conf:68, city:'Bengaluru', color:'var(--c-social)' },
+  { id:'t22',trend:'Dust storm, Bhopal',                 cat:'Hygiene · Lifebuoy',            change:+12, lead:'1-day', conf:74, city:'Bhopal',    color:'var(--c-weather)' },
+];
+
+/* 7-day trend series (index 0 = 6 days ago … 6 = today), used by the
+   interactive category trend chart on the Command Center and TrendScape. */
+const CATEGORY_TRENDS = [
+  { key:'personal', label:'Personal care', color:'#FF6B1A', values:[4,6,9,12,15,19,24] },
+  { key:'home',     label:'Home care',     color:'#0F8B3E', values:[3,4,6,9,14,18,22] },
+  { key:'beverage', label:'Beverages',     color:'#0284c7', values:[2,5,10,14,12,18,21] },
+  { key:'food',     label:'Food & cooking',color:'#E4A11B', values:[1,2,4,3,6,9,12] },
+  { key:'beauty',   label:'Beauty',        color:'#7c3aed', values:[3,5,7,10,13,15,19] },
+];
+
+const IOT = [
+  { id:'i1', source:'Antiperspirant dispenser refill', city:'Delhi (heatwave)',   change:+9,  unit:'WoW', color:'var(--c-sports)' },
+  { id:'i2', source:'Detergent shelf restock',         city:'Mumbai dark stores', change:+12, unit:'WoW', color:'var(--c-monsoon)' },
+  { id:'i3', source:'Ice-cream freezer door-opens',    city:'Delhi (heatwave)',   change:+31, unit:'DoD', color:'var(--c-weather)' },
+  { id:'i4', source:'Handwash pump refill',            city:'Delhi (AQI zone)',   change:+18, unit:'WoW', color:'var(--c-aqi)' },
+  { id:'i5', source:'Haircare dispenser refill',       city:'Delhi NCR',          change:+14, unit:'WoW', color:'var(--c-festival)' },
+  { id:'i6', source:'Q-com beverage POS velocity',     city:'Mumbai',             change:+22, unit:'DoD', color:'var(--c-sports)' },
+  { id:'i7', source:'Home-care shelf restock',         city:'Bengaluru dark stores',change:+18,unit:'WoW', color:'var(--c-festival)' },
+  { id:'i8', source:'Gifting-pack POS velocity',       city:'Kolkata',            change:+21, unit:'WoW', color:'var(--c-festival)' },
+  { id:'i9', source:'Snack dispenser refill',          city:'Bengaluru',          change:+15, unit:'DoD', color:'var(--c-sports)' },
+  { id:'i10',source:'Skincare dispenser refill',       city:'Hyderabad',          change:+10, unit:'WoW', color:'var(--c-weather)' },
+  { id:'i11',source:'Value-pack POS velocity',         city:'Bengaluru',          change:+8,  unit:'WoW', color:'var(--c-social)' },
+  { id:'i12',source:'Emergency-staples shelf restock', city:'Kolkata dark stores',change:+9,  unit:'DoD', color:'var(--c-news)' },
+  { id:'i13',source:'Skincare & gifting-pack refill',  city:'Jaipur',             change:+11, unit:'WoW', color:'var(--c-festival)' },
+];
+
+const FUSED = [
+  { id:'f1', macro:'Heatwave dot · Delhi', iot:'AP dispenser refill uptick',     category:'Rexona Antiperspirant',
+    predicted:'+22% dispenser refill in 5 days', action:'Reroute stock to 60 Delhi + NCR dark stores', conf:93 },
+  { id:'f2', macro:'IPL Final dot · Mumbai', iot:'Q-com beverage POS surge',     category:'Chilled beverages · Kissan',
+    predicted:'+24% beverage lift in 2 days',    action:'Pre-position beverage stock at 40 Mumbai DS', conf:88 },
+  { id:'f3', macro:'Monsoon onset · Mumbai', iot:'Detergent shelf restock',      category:'Surf Excel / Rin liquid',
+    predicted:'+16% detergent lift in 3 days',   action:'Push liquid-detergent SKUs to 32 Mumbai DS',  conf:87 },
+  { id:'f4', macro:'Durga Puja pandal · Kolkata', iot:'Gifting pack POS uptick', category:'Dove / Ponds gifting',
+    predicted:'+21% gifting demand in 10 days',  action:'Activate pandal-adjacent hoardings + Meta',   conf:86 },
+  { id:'f5', macro:'AQI >320 · Delhi', iot:'Handwash pump refill +18% WoW',      category:'Lifebuoy / Dove hygiene',
+    predicted:'+14% hygiene lift in 2 days',     action:'Auto-buy Meta + JioAds; restock 45 Delhi DS', conf:81 },
+  { id:'f6', macro:'Diwali cleaning rush · pan-India', iot:'Home-care shelf restock +18% WoW', category:'Cif / Vim / Domex',
+    predicted:'+27% home-care lift in 6 days',   action:'Pre-position home-care stock at 90 dark stores', conf:90 },
+  { id:'f7', macro:'RCB home fixture · Bengaluru', iot:'Snack dispenser refill +15% DoD', category:'Kissan / Lipton snacks',
+    predicted:'+15% snack lift in 1 day',        action:'Flash-buy Meta + JioAds around Chinnaswamy',   conf:77 },
+  { id:'f8', macro:'Karva Chauth run-up · Jaipur', iot:'Skincare & gifting-pack refill +11% WoW', category:'Lakmé / Ponds / Sunsilk',
+    predicted:'+19% beauty lift in 4 days',      action:'Localize gifting creative for Delhi + Jaipur', conf:85 },
+];
+
+const OPPORTUNITIES = [
+  { id:'o1', title:'Rexona · Delhi heatwave activation',       trigger:'Heatwave 42°C (+22% AP, 5-day lead)',  brandFit:96, roi:'High', risk:'Low',  lead:'5-day',  city:'Delhi',     priority:'high' },
+  { id:'o2', title:'Kissan · IPL Final beverage surge',        trigger:'IPL Final (+24%, 2-day lead)',         brandFit:88, roi:'High', risk:'Med',  lead:'2-day',  city:'Mumbai',    priority:'high' },
+  { id:'o3', title:'Surf Excel · Mumbai monsoon push',         trigger:'Monsoon onset (+16% liquid detergent)',brandFit:92, roi:'High', risk:'Low',  lead:'3-day',  city:'Mumbai',    priority:'high' },
+  { id:'o4', title:'Dove/Ponds · Durga Puja gifting · Kolkata',trigger:'Pandal season (+21% gifting)',         brandFit:90, roi:'High', risk:'Low',  lead:'10-day', city:'Kolkata',   priority:'high' },
+  { id:'o5', title:'Lifebuoy · Delhi AQI hygiene',             trigger:'AQI >320 (+14% handwash)',             brandFit:86, roi:'Med',  risk:'Low',  lead:'2-day',  city:'Delhi',     priority:'high' },
+  { id:'o6', title:'Sunsilk · Delhi NCR weddings',             trigger:'Wedding season (+17% haircare)',       brandFit:82, roi:'Med',  risk:'Low',  lead:'7-day',  city:'Delhi',     priority:'med'  },
+  { id:'o7', title:'Kissan/Knorr · Onam Sadhya week · Kerala', trigger:'Onam (+18% cooking category)',         brandFit:80, roi:'Med',  risk:'Low',  lead:'8-day',  city:'Kochi',     priority:'med'  },
+  { id:'o8', title:'Vim/Cif · Ganesh Chaturthi · Pune',        trigger:'Chaturthi (+19% home care)',           brandFit:78, roi:'Med',  risk:'Low',  lead:'12-day', city:'Pune',      priority:'med'  },
+  { id:'o9', title:'Axe/Sure · Navratri garba · Ahmedabad',    trigger:'Garba prep (+15% deo/personal care)',  brandFit:76, roi:'Med',  risk:'Low',  lead:'9-day',  city:'Ahmedabad', priority:'med'  },
+  { id:'o10',title:'Kwality Wall\'s · Delhi heatwave dispatch',trigger:'Freezer door-opens +31% DoD',          brandFit:74, roi:'Med',  risk:'Med',  lead:'1-day',  city:'Delhi',     priority:'med'  },
+  { id:'o11',title:'Sunsilk anti-frizz · Chennai humidity',    trigger:'Humidity 78% (+13% haircare)',         brandFit:74, roi:'Med',  risk:'Low',  lead:'3-day',  city:'Chennai',   priority:'med'  },
+  { id:'o12',title:'Comfort One Rinse · Mumbai water-cut',     trigger:'Water-cut advisory (+12% rinse-lite)', brandFit:72, roi:'Med',  risk:'Low',  lead:'2-day',  city:'Mumbai',    priority:'med'  },
+  { id:'o13',title:'Dove serum bodywash · morning-shed trend', trigger:'#MorningShed spiking on Reels',        brandFit:70, roi:'Med',  risk:'Med',  lead:'2-day',  city:'Delhi',     priority:'med'  },
+  { id:'o14',title:'Cooking oils · onion price hedge',         trigger:'Onion spike, category −7%',            brandFit:60, roi:'Low',  risk:'Med',  lead:'3-day',  city:'Lucknow',   priority:'low'  },
+];
+
+const FESTIVALS = [
+  { name:'Ganesh Chaturthi', date:'Sep 6 · 12 days',  cats:'Home care · gifting',       color:'var(--c-festival)' },
+  { name:'Onam Sadhya',      date:'Sep 15 · Kerala',  cats:'Cooking · haircare',        color:'var(--c-monsoon)' },
+  { name:'Navratri / Garba', date:'Oct 3 · 9 nights', cats:'Personal care · deo',       color:'var(--brand)' },
+  { name:'Durga Puja',       date:'Oct 10 · Kolkata', cats:'Gifting · beauty',          color:'var(--sindoor)' },
+  { name:'Diwali cleaning',  date:'Nov 1 · pan-India',cats:'Cif · Vim · Domex',         color:'var(--gold)' },
+  { name:'Karva Chauth',     date:'Oct 20 · N. India',cats:'Sunsilk · Lakmé · Ponds',   color:'#d946ef' },
+  { name:'Bihu',             date:'Rongali · Assam',  cats:'Regional gifting',          color:'var(--green)' },
+];
+
+const NOTIFS = [
+  { id:'n1', title:'Fused forecast ready · Delhi',   desc:'93% confidence · reroute stock to 60 NCR dark stores.',  time:'2m ago',  unread:true,  color:'var(--brand)',    icon:'i-radar' },
+  { id:'n2', title:'Guardrail flagged 1 variant',    desc:'Kissan · IPL claim needs BCCI trademark sign-off.',      time:'11m ago', unread:true,  color:'var(--sindoor)',  icon:'i-shield' },
+  { id:'n3', title:'IPL Final spike detected',        desc:'Chilled-beverage category +24% predicted, 2-day lead.',  time:'34m ago', unread:true,  color:'var(--green)',    icon:'i-cricket' },
+  { id:'n4', title:'Monsoon onset in Mumbai · 48h',   desc:'Surf Excel liquid detergent · +16% detected.',           time:'1h ago',  unread:true,  color:'#0284c7',         icon:'i-cloud-rain' },
+  { id:'n5', title:'Durga Puja creative variants',    desc:'6 pandal-season drafts ready for review.',                time:'2h ago',  unread:false, color:'var(--gold)',     icon:'i-brush' },
+  { id:'n6', title:'IoT · Delhi freezer signal',      desc:'Door-opens +31% DoD in the heatwave zone.',              time:'3h ago',  unread:false, color:'var(--c-weather)',icon:'i-signal' },
+  { id:'n7', title:'Diwali cleaning rush fused',      desc:'90% confidence, home care +27% predicted, 6-day lead.',  time:'4h ago',  unread:false, color:'var(--c-festival)',icon:'i-radar' },
+  { id:'n8', title:'RCB fixture spike detected',      desc:'Snack category +15% predicted, 1-day lead, Bengaluru.',  time:'5h ago',  unread:false, color:'var(--green)',    icon:'i-cricket' },
+];
+
+/* =====================================================
+   ROUTER
+   ===================================================== */
+const PAGE_META = {
+  home:       { title:'Command Center',       crumb:'Project NEXT · India MVP · भारत' },
+  portfolio:  { title:'AI Portfolio',         crumb:'Seven products across Sense → Learn' },
+  trendscape: { title:'TrendScape · India',   crumb:'SENSE · Four fused dashboards' },
+  iot:        { title:'IoT Signal Layer',     crumb:'SENSE · Connected packaging, dispensers, shelves · India' },
+  scorer:     { title:'Opportunity Scorer',   crumb:'DECIDE · Brand-fit · ROI · Risk' },
+  forecast:   { title:'Forecast Lab',         crumb:'DECIDE · Live regression model, trained in your browser' },
+  creative:   { title:'Creative Twin Studio', crumb:'CREATE · On-brand variants in hours · Hindi + 8 languages' },
+  activate:   { title:'Localization & Media Agent', crumb:'ACTIVATE · Localize, buy, restock · Blinkit · Zepto · Instamart' },
+  guardrail:  { title:'Brand Guardrail',      crumb:'GOVERN · Human sign-off · ASCI compliant' },
+  loop:       { title:'Signal Loop',          crumb:'LEARN · Attribution feeds forecasting' },
+};
+
+let currentPage = 'home';
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  const meta = PAGE_META[page] || PAGE_META.home;
+  document.getElementById('topTitle').textContent = meta.title;
+  document.getElementById('topCrumb').textContent = meta.crumb;
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const renderer = RENDERERS[page] || RENDERERS.home;
+  renderer(content);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  if (window.innerWidth <= 900) closeSidebar();
+}
+
+/* =====================================================
+   HELPERS
+   ===================================================== */
+function icon(id, cls='i') { return `<svg class="${cls}"><use href="#${id}"/></svg>`; }
+function fmtDelta(v) {
+  const sign = v > 0 ? '+' : '';
+  const cls = v >= 0 ? 'up' : 'down';
+  const ic = v >= 0 ? 'i-arrow-up' : 'i-arrow-down';
+  return `<span class="kpi-delta ${cls}">${icon(ic,'i-sm')} ${sign}${v}%</span>`;
+}
+function signalMeta(k) { return SIGNAL_TYPES.find(s => s.key === k); }
+function riskChipClass(r) { return r === 'Low' ? 'ok' : r === 'Med' ? 'warn' : 'risk'; }
+function roiChipClass(r)  { return r === 'High' ? 'ok' : r === 'Med' ? 'brand' : ''; }
+function priorityColor(p) { return p === 'high' ? 'var(--sindoor)' : p === 'med' ? 'var(--gold)' : 'var(--green)'; }
+
+function sparkline(values, color='#FF6B1A') {
+  const w = 100, h = 28, max = Math.max(...values), min = Math.min(...values), range = max - min || 1;
+  const pts = values.map((v,i) => {
+    const x = (i / (values.length - 1)) * w;
+    const y = h - ((v - min) / range) * h;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="kpi-spark">
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="0,${h} ${pts} ${w},${h}" fill="${color}" opacity="0.12"/>
+  </svg>`;
+}
+function confRing(pct, color='#FF6B1A') {
+  const r = 26, c = 2 * Math.PI * r, off = c * (1 - pct/100);
+  return `<div class="conf-ring">
+    <svg width="68" height="68">
+      <circle cx="34" cy="34" r="${r}" stroke="#ecdfc7" stroke-width="8" fill="none"/>
+      <circle cx="34" cy="34" r="${r}" stroke="${color}" stroke-width="8" fill="none"
+        stroke-dasharray="${c}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+    </svg>
+    <div class="conf-num">${pct}%</div>
+  </div>`;
+}
+function inr(n) {
+  if (n >= 10000000) return `₹${(n/10000000).toFixed(1)} Cr`;
+  if (n >= 100000)   return `₹${(n/100000).toFixed(1)} L`;
+  return `₹${n.toLocaleString('en-IN')}`;
+}
+
+/* =====================================================
+   FORECAST LAB · a genuinely-trained regression model,
+   fit in the browser on the DERIVED trend data. No hardcoded
+   outputs: change the training data and the model refits.
+   ===================================================== */
+
+// Solve an n×n linear system via Gaussian elimination with partial pivoting.
+function solveLinearSystem(A, b) {
+  const n = A.length;
+  const M = A.map((row, i) => [...row, b[i]]);
+  for (let i = 0; i < n; i++) {
+    let maxRow = i;
+    for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[maxRow][i])) maxRow = k;
+    [M[i], M[maxRow]] = [M[maxRow], M[i]];
+    const pivot = M[i][i] || 1e-9;
+    for (let j = i; j <= n; j++) M[i][j] /= pivot;
+    for (let k = 0; k < n; k++) {
+      if (k === i) continue;
+      const factor = M[k][i];
+      for (let j = i; j <= n; j++) M[k][j] -= factor * M[i][j];
+    }
+  }
+  return M.map(row => row[n]);
+}
+
+// Ordinary least squares, multiple features + bias, via the normal equations.
+function fitLinearRegression(X, y) {
+  const n = X.length, p = X[0].length; // p includes bias column
+  const XtX = Array.from({length:p}, () => Array(p).fill(0));
+  const Xty = Array(p).fill(0);
+  for (let i = 0; i < n; i++) {
+    for (let a = 0; a < p; a++) {
+      Xty[a] += X[i][a] * y[i];
+      for (let b = 0; b < p; b++) XtX[a][b] += X[i][a] * X[i][b];
+    }
+  }
+  const beta = solveLinearSystem(XtX, Xty);
+  const preds = X.map(row => row.reduce((s,v,i)=>s+v*beta[i], 0));
+  const yMean = y.reduce((a,b)=>a+b,0) / n;
+  const ssTot = y.reduce((s,v)=>s+(v-yMean)**2, 0);
+  const ssRes = y.reduce((s,v,i)=>s+(v-preds[i])**2, 0);
+  const r2 = ssTot > 0 ? 1 - ssRes/ssTot : 1;
+  const mae = preds.reduce((s,v,i)=>s+Math.abs(v-y[i]), 0) / n;
+  return { beta, preds, r2, mae, n };
+}
+
+// Simple least-squares trend line for a single series (used to extrapolate short series).
+function fitTrendLine(values) {
+  const n = values.length;
+  const xMean = (n-1)/2;
+  const yMean = values.reduce((a,b)=>a+b,0)/n;
+  let num = 0, den = 0;
+  values.forEach((v,i)=>{ num += (i-xMean)*(v-yMean); den += (i-xMean)**2; });
+  const slope = den ? num/den : 0;
+  const intercept = yMean - slope*xMean;
+  return { slope, intercept };
+}
+
+function parseLeadDays(lead) {
+  const m = /(\d+)/.exec(lead || '');
+  return m ? parseInt(m[1], 10) : 3;
+}
+
+// Train once at load, on the live DERIVED dataset — features: confidence %, lead time (days) → target: predicted % change.
+function trainForecastModel() {
+  const rows = DERIVED.map(t => ({ conf: t.conf, lead: parseLeadDays(t.lead), y: t.change, label: t.trend, city: t.city }));
+  const X = rows.map(r => [1, r.conf, r.lead]);
+  const y = rows.map(r => r.y);
+  const fit = fitLinearRegression(X, y);
+  return { ...fit, rows };
+}
+const FORECAST_MODEL = trainForecastModel();
+function predictLift(conf, leadDays) {
+  const [b0, b1, b2] = FORECAST_MODEL.beta;
+  return b0 + b1*conf + b2*leadDays;
+}
+// Connects the trained model to the Opportunity Scorer: reuse a matching DERIVED
+// trend's real confidence when we have one for the same city, else fall back to
+// brand-fit as a stand-in confidence input so every opportunity still gets a score.
+function estimateOpportunityLift(o) {
+  const leadDays = parseLeadDays(o.lead);
+  const match = DERIVED.find(t => t.city === o.city);
+  const conf = match ? match.conf : o.brandFit;
+  return { lift: predictLift(conf, leadDays), confUsed: conf, matched: !!match };
+}
+
+/* =====================================================
+   PAGE RENDERERS
+   ===================================================== */
+const RENDERERS = {};
+
+/* ---------- HOME · Command Center ---------- */
+RENDERERS.home = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Namaste, Priya <span class="badge-live">LIVE · भारत</span></h1>
+        <p class="page-sub">India MVP dashboard · catch every trend inside its 48–72h lifespan, from Sense to Activate, across HUL's beauty, home &amp; personal care portfolio.</p>
+      </div>
+      <div class="flex-gap">
+        <select class="btn" id="regionFilter" aria-label="Filter by region">
+          <option>All regions</option><option>North</option><option>West</option><option>South</option><option>East</option><option>NE</option><option>Central</option>
+        </select>
+        <button class="btn btn-primary" onclick="navigate('scorer')">${icon('i-target','i-sm')} Review queue</button>
+      </div>
+    </div>
+
+    <div class="grid g-4 mb-md" id="kpiGrid"></div>
+
+    <div class="grid g-8-4 mb-md">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-map','i-sm')} India trend map</h3>
+            <p class="card-sub">Every trend, every platform · monsoon, cricket, festivals, mandi prices, AQI, news, social.</p>
+          </div>
+          <button class="btn btn-sm" onclick="navigate('trendscape')">Open TrendScape →</button>
+        </div>
+        <div id="mapContainer"></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-flame','i-sm')} Live spikes</h3>
+            <p class="card-sub">Sorted by predicted category impact.</p>
+          </div>
+        </div>
+        <div id="spikeList"></div>
+      </div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-trend','i-sm')} Category spike trends · last 7 days + 3-day forecast</h3>
+          <p class="card-sub">Toggle a category to isolate it. Hover any point for the exact value.</p>
+        </div>
+        <button class="btn btn-sm" onclick="downloadSvg('trendSvg','category-trends.svg')">${icon('i-copy','i-sm')} Export SVG</button>
+      </div>
+      <div id="categoryTrend"></div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-cpu','i-sm')} Model quick check</h3>
+          <p class="card-sub">The Forecast Lab regression, trained on live trend data, in one line.</p>
+        </div>
+        <button class="btn btn-sm" onclick="navigate('forecast')">Open Forecast Lab →</button>
+      </div>
+      <div id="modelQuickCheck"></div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-diya','i-sm')} Indian festival calendar · next 30 days</h3>
+          <p class="card-sub">TrendScape auto-briefs Creative Twin per festival, per region.</p>
+        </div>
+      </div>
+      <div class="fest-strip" id="festStrip"></div>
+    </div>
+
+    <div class="grid g-2 mb-md">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-trend','i-sm')} Signal-to-shelf clock</h3>
+            <p class="card-sub">Today (traditional) vs. Project NEXT (AI-native)</p>
+          </div>
+        </div>
+        <div id="stageCompare"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-approve','i-sm')} Awaiting your sign-off</h3>
+            <p class="card-sub">Every auto-trigger passes through a named human first.</p>
+          </div>
+          <button class="btn btn-sm" onclick="navigate('guardrail')">Guardrail →</button>
+        </div>
+        <div id="approvalsMini"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-grid','i-sm')} AI portfolio status</h3>
+          <p class="card-sub">Seven products across the SENSE → DECIDE → CREATE → ACTIVATE → LEARN lifecycle</p>
+        </div>
+        <button class="btn btn-sm" onclick="navigate('portfolio')">Portfolio →</button>
+      </div>
+      <div class="grid g-fill-3" id="portfolioMini"></div>
+    </div>
+  `;
+
+  const kpis = [
+    { label:'Trend spikes detected today', value:'27', delta:+22, spark:[10,14,17,18,20,23,25,27], sparkColor:'var(--brand)' },
+    { label:'Median signal-to-shelf time', value:'Same-day', foot:'was 6–10 wks', spark:[9,8,7,5,4,3,2,1], sparkColor:'var(--green)' },
+    { label:'Predicted category demand lift',value:'+24%',   delta:+6,  spark:[12,15,18,17,20,22,23,24], sparkColor:'var(--gold)' },
+    { label:'Cities streaming live signal',   value:'12',     foot:'Delhi · Mumbai · BLR · CHN…', spark:[3,5,7,8,10,11,12,12], sparkColor:'#0284c7' },
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi">
+      <div class="kpi-label">${k.label}</div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <div class="kpi-value">${k.value}</div>
+        ${k.delta!=null ? fmtDelta(k.delta) : `<span class="text-sm text-mute">${k.foot||''}</span>`}
+      </div>
+      ${k.delta!=null && k.foot ? `<div class="text-sm text-mute">${k.foot}</div>` : ''}
+      ${sparkline(k.spark, k.sparkColor)}
+    </div>
+  `).join('');
+
+  renderMap(document.getElementById('mapContainer'));
+  renderCategoryTrend(document.getElementById('categoryTrend'));
+  document.getElementById('modelQuickCheck').innerHTML = `
+    <div class="grid g-3">
+      <div class="kpi" style="padding:12px"><div class="kpi-label">Fit (R²)</div><div class="kpi-value" style="font-size:20px">${(FORECAST_MODEL.r2*100).toFixed(1)}%</div></div>
+      <div class="kpi" style="padding:12px"><div class="kpi-label">Avg error</div><div class="kpi-value" style="font-size:20px">±${FORECAST_MODEL.mae.toFixed(1)}pt</div></div>
+      <div class="kpi" style="padding:12px"><div class="kpi-label">Trained on</div><div class="kpi-value" style="font-size:20px">${FORECAST_MODEL.n} trends</div></div>
+    </div>
+  `;
+
+  document.getElementById('spikeList').innerHTML = DERIVED.slice(0,6).map(t => `
+    <div class="insight-row">
+      <div class="insight-icon" style="background:${t.color}">${icon('i-flame','i-sm')}</div>
+      <div class="insight-body">
+        <div class="insight-title">${t.trend}</div>
+        <div class="insight-meta">${t.cat} · ${t.lead} lead · ${t.city}</div>
+      </div>
+      <div class="insight-value">${t.change>0?'+':''}${t.change}%</div>
+    </div>
+  `).join('');
+
+  document.getElementById('festStrip').innerHTML = FESTIVALS.map(f => `
+    <div class="fest-card" style="border-left-color:${f.color}">
+      <div class="fest-date">${f.date}</div>
+      <div class="fest-name">${f.name}</div>
+      <div class="fest-cats">${f.cats}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('stageCompare').innerHTML = `
+    <table class="table">
+      <thead><tr><th>Stage</th><th>Today</th><th>Project NEXT</th></tr></thead>
+      <tbody>
+        ${[
+          ['Detection','Dashboards checked · 12–24h lag','Continuous streaming · real time'],
+          ['Insight synthesis','Analyst cross-references · 2–3 days','LLM insight card in seconds'],
+          ['Creative brief & asset','Brief → shoot → review · 2–6 wks','Hindi + regional variants in hours'],
+          ['Localization & activation','Manual adaptation · 1–2 wks','Same-day localize, auto-buy'],
+          ['Attribution','Post-campaign report · weeks later','Signal Loop feedback · continuous'],
+        ].map(r=>`<tr><td><b>${r[0]}</b></td><td class="text-mute">${r[1]}</td><td style="color:var(--brand-2);font-weight:700">${r[2]}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById('approvalsMini').innerHTML = FUSED.slice(0,2).map(f => `
+    <div class="insight-row" style="align-items:flex-start">
+      <div class="insight-icon" style="background:var(--brand)">${icon('i-approve','i-sm')}</div>
+      <div class="insight-body">
+        <div class="insight-title">${f.category} · ${f.predicted}</div>
+        <div class="insight-meta">${f.macro} × ${f.iot} · ${f.conf}% confidence</div>
+        <div class="text-sm" style="margin-top:6px">${f.action}</div>
+      </div>
+    </div>
+  `).join('') + `
+    <div class="action-bar">
+      <button class="btn btn-ok" onclick="openApprovalModal('${FUSED[0].id}')">${icon('i-approve','i-sm')} Approve</button>
+      <button class="btn" onclick="openApprovalModal('${FUSED[0].id}','edit')">${icon('i-edit','i-sm')} Edit</button>
+      <button class="btn btn-ghost">${icon('i-x','i-sm')} Reject</button>
+    </div>
+  `;
+
+  document.getElementById('portfolioMini').innerHTML = PORTFOLIO.map(p => `
+    <div class="prod-card" onclick="navigate('${p.key}')">
+      <div class="prod-head">
+        <div class="prod-icon" style="background:${p.color}">${icon(p.icon,'i')}</div>
+        <span class="chip ${p.pri==='P0'?'ok':p.pri==='P1'?'warn':'navy'}">${p.pri}</span>
+      </div>
+      <div>
+        <div class="prod-stage">${p.stage}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.desc}</div>
+      </div>
+      <div class="prod-foot">
+        <span>${p.status}</span><span>Open →</span>
+      </div>
+    </div>
+  `).join('');
+};
+
+/* ---------- INDIA MAP ---------- */
+function renderMap(container, opts={}) {
+  const activeFilters = opts.filters || SIGNAL_TYPES.map(s=>s.key);
+
+  // Simplified India silhouette path (approximate landmass shape inside 0-100 viewBox)
+  const INDIA_PATH = `
+    M 39,14 L 44,12 L 48,12 L 52,14 L 56,15 L 60,17 L 63,20
+    L 66,22 L 70,22 L 74,24 L 78,27 L 78,32 L 74,35 L 72,38
+    L 70,40 L 66,42 L 62,44 L 60,47 L 60,50 L 58,53 L 55,58
+    L 52,63 L 50,68 L 48,72 L 45,77 L 42,82 L 39,86 L 36,85
+    L 34,80 L 32,74 L 30,68 L 27,62 L 24,56 L 22,50 L 21,44
+    L 22,40 L 24,36 L 26,32 L 28,28 L 30,24 L 33,20 L 36,17 Z
+  `;
+
+  const CITIES = [
+    { name:'Delhi',      x:44, y:26 }, { name:'Mumbai',   x:32, y:55 },
+    { name:'Bengaluru',  x:38, y:71 }, { name:'Chennai',  x:42, y:78 },
+    { name:'Kolkata',    x:60, y:45 }, { name:'Hyderabad',x:42, y:64 },
+    { name:'Ahmedabad',  x:26, y:52 }, { name:'Pune',     x:33, y:57 },
+    { name:'Jaipur',     x:36, y:30 }, { name:'Lucknow',  x:48, y:33 },
+    { name:'Kochi',      x:32, y:80 }, { name:'Guwahati', x:74, y:32 },
+    { name:'Bhopal',     x:40, y:44 }, { name:'Amritsar', x:39, y:22 },
+  ];
+
+  container.innerHTML = `
+    <div class="map-wrap">
+      <div class="map-title-overlay">🇮🇳 भारत · Live signal map</div>
+      <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="indiaFill" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#1e3564" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#0f1a3a" stop-opacity="1"/>
+          </radialGradient>
+          <linearGradient id="indiaStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF9933" stop-opacity=".7"/>
+            <stop offset="50%" stop-color="#ffffff" stop-opacity=".4"/>
+            <stop offset="100%" stop-color="#138808" stop-opacity=".7"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Latitude grid -->
+        <g stroke="#1e2c5a" stroke-width="0.1" opacity="0.5">
+          ${[10,20,30,40,50,60,70,80,90].map(y=>`<line x1="0" y1="${y}" x2="100" y2="${y}"/>`).join('')}
+          ${[10,20,30,40,50,60,70,80,90].map(x=>`<line x1="${x}" y1="0" x2="${x}" y2="100"/>`).join('')}
+        </g>
+
+        <!-- India silhouette -->
+        <path d="${INDIA_PATH}" fill="url(#indiaFill)" stroke="url(#indiaStroke)" stroke-width="0.6" stroke-linejoin="round"/>
+
+        <!-- Kashmir crown (approximate) -->
+        <path d="M 36,17 L 38,13 L 42,11 L 44,12" fill="none" stroke="url(#indiaStroke)" stroke-width="0.6" stroke-dasharray="0.6 0.6"/>
+
+        <!-- Cities as tiny reference dots + labels -->
+        ${CITIES.map(c => `
+          <circle class="map-city-dot" cx="${c.x}" cy="${c.y}" r="0.5"/>
+          <text class="map-city-label" x="${c.x+1.2}" y="${c.y+0.4}">${c.name}</text>
+        `).join('')}
+
+        <!-- Trend dots -->
+        ${MAP_DOTS.filter(d=>activeFilters.includes(d.type)).map(d => {
+          const m = signalMeta(d.type);
+          const color = getComputedStyle(document.documentElement).getPropertyValue(m.color.replace('var(','').replace(')','').trim()) || m.color;
+          return `
+            <circle class="map-ping" cx="${d.x}" cy="${d.y}" r="0.6" fill="none" stroke="${color}" stroke-width="0.25" opacity="0.7"/>
+            <circle class="map-dot" cx="${d.x}" cy="${d.y}" r="${(d.size).toFixed(1)}"
+              fill="${color}" stroke="white" stroke-width="0.25" opacity="0.95"
+              data-id="${d.id}" data-label="${d.label}" data-city="${d.city}" data-type="${m.label}"/>
+          `;
+        }).join('')}
+      </svg>
+
+      <div class="map-filters">
+        ${SIGNAL_TYPES.map(s => {
+          const cvar = s.color.replace('var(','').replace(')','').trim();
+          const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || s.color;
+          return `
+            <button class="map-filter ${activeFilters.includes(s.key)?'':'off'}" data-key="${s.key}">
+              <span class="dot" style="background:${cval}"></span>${s.label}
+            </button>
+          `;
+        }).join('')}
+      </div>
+      <div class="map-legend">
+        ${SIGNAL_TYPES.map(s => {
+          const cvar = s.color.replace('var(','').replace(')','').trim();
+          const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || s.color;
+          return `<div class="map-legend-item"><span class="dot" style="background:${cval};color:${cval}"></span>${s.label}</div>`;
+        }).join('')}
+      </div>
+      <div id="mapCallout" class="map-callout hidden"></div>
+    </div>
+  `;
+
+  const wrap = container.querySelector('.map-wrap');
+  const callout = container.querySelector('#mapCallout');
+
+  container.querySelectorAll('.map-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', e => {
+      const t = e.target;
+      const rect = wrap.getBoundingClientRect();
+      const svgRect = t.getBoundingClientRect();
+      const cx = svgRect.left + svgRect.width/2 - rect.left;
+      const cy = svgRect.top + svgRect.height/2 - rect.top;
+      callout.style.left = Math.min(cx+12, rect.width-260) + 'px';
+      callout.style.top = Math.max(cy-40, 8) + 'px';
+      callout.innerHTML = `
+        <div class="cb-title">${t.dataset.label}</div>
+        <div class="cb-meta">${t.dataset.type} · ${t.dataset.city}</div>
+        <div class="text-sm">Click to inspect derived category impact.</div>
+      `;
+      callout.classList.remove('hidden');
+    });
+    dot.addEventListener('mouseleave', () => callout.classList.add('hidden'));
+    dot.addEventListener('click', () => navigate('trendscape'));
+  });
+
+  container.querySelectorAll('.map-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('off');
+      const filters = Array.from(container.querySelectorAll('.map-filter:not(.off)')).map(b=>b.dataset.key);
+      renderMap(container, { filters });
+    });
+  });
+}
+
+
+/* ---------- LIVE SIGNAL EXPLORER (interactive) ---------- */
+let sigActiveFilters = SIGNAL_TYPES.map(s => s.key);
+function renderSignalExplorer(container) {
+  const filtered = MAP_DOTS.filter(d => sigActiveFilters.includes(d.type));
+  const regions = ['North','West','South','East','NE','Central'];
+  const maxCount = Math.max(...regions.map(r => filtered.filter(d => d.region === r).length), 1);
+
+  container.innerHTML = `
+    <div class="sig-filters">
+      ${SIGNAL_TYPES.map(s => {
+        const cvar = s.color.replace('var(','').replace(')','').trim();
+        const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || s.color;
+        return `<button class="sig-filter ${sigActiveFilters.includes(s.key)?'':'off'}" data-key="${s.key}">
+          <span class="dot" style="background:${cval}"></span>${s.label}
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="sig-bars">
+      ${regions.map(r => {
+        const count = filtered.filter(d => d.region === r).length;
+        const pct = Math.round((count / maxCount) * 100);
+        return `
+          <div class="sig-bar-row">
+            <span class="text-mute">${r}</span>
+            <div class="sig-bar-track">
+              <div class="sig-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--brand),var(--gold))" title="${count} live signals in ${r}"></div>
+            </div>
+            <span style="font-weight:700;text-align:right">${count}</span>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div class="divider"></div>
+    <div class="sig-list">
+      ${filtered.length ? filtered.map(d => {
+        const m = signalMeta(d.type);
+        const cvar = m.color.replace('var(','').replace(')','').trim();
+        const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || m.color;
+        return `
+          <div class="sig-item" data-id="${d.id}">
+            <div class="sig-icon" style="background:${cval}">${icon(m.icon,'i-sm')}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:12.5px">${d.label}</div>
+              <div class="text-sm text-mute">${m.label} · ${d.city}, ${d.state} · ${d.region}</div>
+            </div>
+          </div>
+        `;
+      }).join('') : `<div class="sig-empty">No live signals match the selected filters.</div>`}
+    </div>
+  `;
+
+  container.querySelectorAll('.sig-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.key;
+      if (sigActiveFilters.includes(key)) {
+        sigActiveFilters = sigActiveFilters.filter(k => k !== key);
+      } else {
+        sigActiveFilters = [...sigActiveFilters, key];
+      }
+      renderSignalExplorer(container);
+    });
+  });
+  container.querySelectorAll('.sig-item').forEach(item => {
+    item.addEventListener('click', () => navigate('trendscape'));
+  });
+}
+
+/* ---------- INTERACTIVE CATEGORY TREND LINE CHART ---------- */
+let trendActiveKeys = CATEGORY_TRENDS.map(c => c.key);
+// Generic hover-tooltip wiring for the simple CSS bar charts (Dashboard 2's
+// "Predicted category Δ" and "Confidence distribution" bars, etc.). Pass the
+// chart container id, the tooltip element id, and a fn(trend) => HTML string.
+function wireBarTooltips(chartId, tooltipId, fmt) {
+  const chart = document.getElementById(chartId);
+  const tooltip = document.getElementById(tooltipId);
+  if (!chart || !tooltip) return;
+  chart.querySelectorAll('.bar').forEach(bar => {
+    bar.style.cursor = 'pointer';
+    bar.addEventListener('mouseenter', () => {
+      const t = DERIVED[parseInt(bar.dataset.idx, 10)];
+      if (!t) return;
+      const chartRect = chart.getBoundingClientRect();
+      const barRect = bar.getBoundingClientRect();
+      const x = barRect.left - chartRect.left + barRect.width / 2;
+      const y = barRect.top - chartRect.top;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+      tooltip.innerHTML = fmt(t);
+      tooltip.classList.add('show');
+    });
+    bar.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+function renderCategoryTrend(container) {
+  const w = 760, h = 220, padL = 34, padB = 24, padT = 14, padR = 10;
+  const days = ['6d ago','5d ago','4d ago','3d ago','2d ago','Yesterday','Today','+1d','+2d','+3d'];
+  const totalSpan = days.length - 1; // 9
+  const active = CATEGORY_TRENDS.filter(c => trendActiveKeys.includes(c.key));
+
+  // Forecast the next 3 days per category using the model's trend-line fit (real least squares, not guesses).
+  const forecasted = active.map(c => {
+    const { slope, intercept } = fitTrendLine(c.values);
+    const future = [7,8,9].map(i => Math.max(0, intercept + slope*i));
+    return { ...c, future };
+  });
+
+  const allVals = forecasted.length ? forecasted.flatMap(c => [...c.values, ...c.future]) : [0];
+  const maxV = Math.max(...allVals, 5);
+
+  const xFor = i => padL + (i / totalSpan) * (w - padL - padR);
+  const yFor = v => padT + (1 - v / maxV) * (h - padT - padB);
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => {
+    const y = padT + f * (h - padT - padB);
+    const val = Math.round(maxV * (1 - f));
+    return `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#ecdfc7" stroke-width="1"/>
+            <text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9" fill="#8f7d5f">${val}%</text>`;
+  }).join('');
+
+  const todayX = xFor(6);
+  const forecastZone = `<rect x="${todayX}" y="${padT}" width="${w-padR-todayX}" height="${h-padT-padB}" fill="#FF6B1A" opacity="0.04"/>
+    <line x1="${todayX}" y1="${padT}" x2="${todayX}" y2="${h-padB}" stroke="#d8c8a4" stroke-width="1" stroke-dasharray="2 3"/>
+    <text x="${todayX+4}" y="${padT+9}" font-size="8.5" fill="#8f7d5f" font-weight="700">MODEL FORECAST →</text>`;
+
+  const xLabels = days.map((d,i) => `<text x="${xFor(i)}" y="${h-6}" text-anchor="middle" font-size="9" fill="${i>6?'var(--brand-2)':'#8f7d5f'}" font-weight="${i>6?'700':'400'}">${d}</text>`).join('');
+
+  const series = forecasted.map(c => {
+    const pts = c.values.map((v,i) => `${xFor(i).toFixed(1)},${yFor(v).toFixed(1)}`).join(' ');
+    const dots = c.values.map((v,i) => `<circle class="trend-dot" cx="${xFor(i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" r="3.2" fill="${c.color}" data-cat="${c.label}" data-val="${v}" data-day="${days[i]}" data-kind="Actual"/>`).join('');
+
+    const futurePts = [c.values[6], ...c.future].map((v,i) => `${xFor(6+i).toFixed(1)},${yFor(v).toFixed(1)}`).join(' ');
+    const futureDots = c.future.map((v,i) => `<circle class="trend-dot" cx="${xFor(7+i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" r="3.2" fill="white" stroke="${c.color}" stroke-width="2" data-cat="${c.label}" data-val="${v.toFixed(1)}" data-day="${days[7+i]}" data-kind="Model forecast"/>`).join('');
+
+    return `<polyline points="${pts}" fill="none" stroke="${c.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>${dots}
+      <polyline points="${futurePts}" fill="none" stroke="${c.color}" stroke-width="2.2" stroke-dasharray="4 3" stroke-linecap="round"/>${futureDots}`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="trend-legend">
+      ${CATEGORY_TRENDS.map(c => `
+        <button class="trend-toggle ${trendActiveKeys.includes(c.key)?'':'off'}" data-key="${c.key}">
+          <span class="dot" style="background:${c.color}"></span>${c.label}
+        </button>
+      `).join('')}
+    </div>
+    <p class="text-sm text-mute" style="margin:0 0 10px">Solid line is real data. Dashed line beyond "Today" is a trend-line forecast for the next 3 days, fit live from the same points, same idea as the Forecast Lab model.</p>
+    <div class="trend-chart-wrap">
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:240px" id="trendSvg">
+        ${gridLines}
+        ${forecastZone}
+        ${xLabels}
+        ${series}
+      </svg>
+      <div class="trend-tooltip" id="trendTooltip"></div>
+    </div>
+  `;
+
+  container.querySelectorAll('.trend-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.key;
+      if (trendActiveKeys.includes(key)) {
+        if (trendActiveKeys.length > 1) trendActiveKeys = trendActiveKeys.filter(k => k !== key);
+      } else {
+        trendActiveKeys = [...trendActiveKeys, key];
+      }
+      renderCategoryTrend(container);
+    });
+  });
+
+  const tooltip = container.querySelector('#trendTooltip');
+  container.querySelectorAll('.trend-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', (e) => {
+      const cx = dot.getAttribute('cx'), cy = dot.getAttribute('cy');
+      const svg = container.querySelector('#trendSvg');
+      const rect = svg.getBoundingClientRect();
+      const scaleX = rect.width / w, scaleY = rect.height / h;
+      tooltip.style.left = (cx * scaleX) + 'px';
+      tooltip.style.top = (cy * scaleY) + 'px';
+      tooltip.innerHTML = `<b>${dot.dataset.cat}</b><br>${dot.dataset.day} · ${dot.dataset.kind} · +${dot.dataset.val}%`;
+      tooltip.classList.add('show');
+    });
+    dot.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+
+/* ---------- PORTFOLIO ---------- */
+RENDERERS.portfolio = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">AI Portfolio</h1>
+        <p class="page-sub">Seven AI products across SENSE → DECIDE → CREATE → ACTIVATE → LEARN. TrendScape and Brand Guardrail get built first because every other agent plugs into them.</p>
+      </div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-trend','i-sm')} Portfolio performance by metric</h3>
+          <p class="card-sub">Switch the metric to see why TrendScape and Guardrail get built first: every downstream agent subscribes to TrendScape's stable event contract once, not three times.</p>
+        </div>
+      </div>
+      <div id="metricChart"></div>
+    </div>
+
+    <div class="grid g-fill-3" id="portfolioFull"></div>
+
+    <div class="card mt-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-rupee','i-sm')} Cost &amp; Roadmap (illustrative)</h3>
+          <p class="card-sub">MVP → Pilot → Scale, from the deck. Cost shown in USD (source deck) with ₹ conversion at ₹84 / $.</p>
+        </div>
+      </div>
+      <div class="timeline">
+        ${[
+          {phase:'MVP · Mo 0–3',     cost:'~$0.3M · ₹2.5 Cr',  note:'1 market (India), Dashboards 1+3 live, manual review'},
+          {phase:'Pilot · Mo 3–6',   cost:'~$0.4M · ₹3.4 Cr',  note:'3 markets, Dashboard 2 forecasting + Dashboard 4 fusion live'},
+          {phase:'Scale · Mo 6–12',  cost:'~$1.0M · ₹8.4 Cr', note:'10+ markets, full IoT rollout + Creative & Media agents'},
+          {phase:'Run-rate · ongoing', cost:'~$40K/mo · ₹34 L/mo', note:'Infra, APIs & model inference across live markets'},
+        ].map(t=>`
+          <div class="tl-item">
+            <div class="tl-phase">${t.phase}</div>
+            <div class="tl-cost">${t.cost}</div>
+            <div class="tl-note">${t.note}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('portfolioFull').innerHTML = PORTFOLIO.map(p => `
+    <div class="prod-card" onclick="navigate('${p.key}')">
+      <div class="prod-head">
+        <div class="prod-icon" style="background:${p.color}">${icon(p.icon,'i')}</div>
+        <span class="chip ${p.pri==='P0'?'ok':p.pri==='P1'?'warn':'navy'}">${p.pri} · ${p.pri==='P0'?'Build first':p.pri==='P1'?'Fast follow':'Scale phase'}</span>
+      </div>
+      <div>
+        <div class="prod-stage">${p.stage}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.desc}</div>
+      </div>
+      <div class="prod-foot">
+        <span>${p.status}</span><span>Open →</span>
+      </div>
+    </div>
+  `).join('');
+
+  renderMetricChart(document.getElementById('metricChart'));
+};
+
+let portfolioMetricKey = 'impact';
+const METRIC_DEFS = {
+  impact:   { label:'Business impact score', suffix:'', max:100, fmt:v=>v },
+  ttv:      { label:'Weeks to time-to-value', suffix:'wk', max:28, fmt:v=>v, invert:true },
+  adoption: { label:'Team adoption %', suffix:'%', max:100, fmt:v=>v },
+};
+function renderMetricChart(container) {
+  const def = METRIC_DEFS[portfolioMetricKey];
+  container.innerHTML = `
+    <div class="metric-toggle-row">
+      ${Object.entries(METRIC_DEFS).map(([k,d]) => `
+        <button class="btn btn-sm ${k===portfolioMetricKey?'btn-primary':''}" data-metric="${k}">${d.label}</button>
+      `).join('')}
+    </div>
+    <div class="metric-bars">
+      ${PORTFOLIO.map(p => {
+        const val = PORTFOLIO_METRICS[p.key][portfolioMetricKey];
+        const pct = Math.max(6, Math.round((val / def.max) * 100));
+        return `
+          <div class="metric-bar-col">
+            <div class="metric-bar" style="height:${pct}%;background:${p.color}" data-key="${p.key}" title="${p.name}: ${def.fmt(val)}${def.suffix}">
+              <div class="metric-bar-value">${def.fmt(val)}${def.suffix}</div>
+            </div>
+            <div class="metric-bar-label">${p.name}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+  container.querySelectorAll('[data-metric]').forEach(btn => {
+    btn.addEventListener('click', () => { portfolioMetricKey = btn.dataset.metric; renderMetricChart(container); });
+  });
+  container.querySelectorAll('.metric-bar').forEach(bar => {
+    bar.addEventListener('click', () => navigate(bar.dataset.key));
+  });
+}
+
+/* ---------- TRENDSCAPE ---------- */
+let currentTsTab = 'macro';
+RENDERERS.trendscape = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">TrendScape · India <span class="badge-live">STREAMING</span></h1>
+        <p class="page-sub">Four fused dashboards that turn any Indian trend · monsoon, cricket, festivals, mandi prices, AQI, social · into a predicted shelf-level behavior shift.</p>
+      </div>
+      <div class="flex-gap">
+        <select class="btn" id="tsRegion" aria-label="Filter by region"><option>All India</option><option>North</option><option>West</option><option>South</option><option>East</option><option>NE</option><option>Central</option></select>
+        <button class="btn btn-primary">${icon('i-eye','i-sm')} Audit log</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tsTabs">
+      <button class="tab ${currentTsTab==='macro'?'active':''}" data-tab="macro">1 · Macro India map <span class="num">${MAP_DOTS.length}</span></button>
+      <button class="tab ${currentTsTab==='derived'?'active':''}" data-tab="derived">2 · Derived trend <span class="num">${DERIVED.length}</span></button>
+      <button class="tab ${currentTsTab==='iot'?'active':''}" data-tab="iot">3 · IoT behavior <span class="num">${IOT.length}</span></button>
+      <button class="tab ${currentTsTab==='fused'?'active':''}" data-tab="fused">4 · Fused forecast <span class="num">${FUSED.length}</span></button>
+    </div>
+
+    <div id="tsBody"></div>
+
+    <div class="grid g-2 mt-md">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">${icon('i-shield','i-sm')} Signal sources &amp; privacy</h3></div>
+        <div style="font-size:12.5px;line-height:1.7;color:var(--text-dim)">
+          <p><b>Macro:</b> X, Instagram, ShareChat, Moj, YouTube, news &amp; IMD weather APIs, mandi.gov.in · public metadata only, not private accounts or DMs.</p>
+          <p><b>Micro:</b> Connected packaging, dispensers &amp; shelf sensors via MQTT · opt-in, anonymized at the edge, aggregated at SKU×pincode×hour, never tied to identity (<b>DPDP Act 2023</b> aligned).</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">${icon('i-cpu','i-sm')} AI technologies &amp; agents</h3></div>
+        <ul style="font-size:12.5px;color:var(--text-dim);padding-left:18px;margin:0;line-height:1.9">
+          <li><b>Streaming:</b> Apache Kafka + Flink, FastAPI ingestion adapters</li>
+          <li><b>Storage:</b> PostgreSQL/PostGIS (spatial), Redis (low-latency reads)</li>
+          <li><b>Forecasting:</b> Prophet/LSTM + SIR diffusion (macro → category demand)</li>
+          <li><b>Fusion:</b> geo-time join engine scoring macro against IoT baseline</li>
+          <li><b>Orchestration:</b> retrieval-grounded LLM insight agent (Hindi + 8 Indian languages)</li>
+          <li><b>Human oversight:</b> named approval before any auto-trigger; Guardrail screens for tone/legal risk (ASCI compliant); full signal→decision→outcome audit log for GDT.</li>
+        </ul>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll('#tsTabs .tab').forEach(t => {
+    t.addEventListener('click', () => { currentTsTab = t.dataset.tab; RENDERERS.trendscape(root); });
+  });
+  renderTsBody();
+};
+
+function renderTsBody() {
+  const body = document.getElementById('tsBody');
+  if (currentTsTab === 'macro') {
+    body.innerHTML = `
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-map','i-sm')} Dashboard 1 · Macro India trend map</h3>
+            <p class="card-sub">Every trend, every platform, unfiltered, not limited to product mentions. Toggle signal types on the map.</p>
+          </div>
+        </div>
+        <div id="macroMap"></div>
+        <div class="divider"></div>
+        <div class="grid g-3">
+          ${MAP_DOTS.slice(0,6).map(d=>{
+            const m = signalMeta(d.type);
+            const cvar = m.color.replace('var(','').replace(')','').trim();
+            const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || m.color;
+            return `
+              <div class="insight-row">
+                <div class="insight-icon" style="background:${cval}">${icon(m.icon,'i-sm')}</div>
+                <div class="insight-body">
+                  <div class="insight-title">${d.label}</div>
+                  <div class="insight-meta">${m.label} · ${d.city}, ${d.state}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    renderMap(document.getElementById('macroMap'));
+  }
+  else if (currentTsTab === 'derived') {
+    body.innerHTML = `
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-trend','i-sm')} Dashboard 2 · Derived trend · Macro → Category demand (India)</h3>
+            <p class="card-sub">Scores every macro dot for category impact, weather/mandi/news cross-referenced. Lead times shown.</p>
+          </div>
+          <div class="flex-gap">
+            <button class="btn btn-sm">Category ▾</button>
+            <button class="btn btn-sm">Lead time ▾</button>
+          </div>
+        </div>
+
+        <table class="table">
+          <thead><tr><th>Macro trend</th><th>Category</th><th>Predicted Δ</th><th title="Days between detecting the trend and the predicted shelf impact">Lead</th><th title="How strongly the world signal and the real device/sales signal agree">Confidence</th><th>City</th></tr></thead>
+          <tbody>
+            ${DERIVED.map(t=>`
+              <tr onclick="openDerivedModal('${t.id}')">
+                <td><div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${t.color};display:inline-block"></span><b>${t.trend}</b></div></td>
+                <td>${t.cat}</td>
+                <td style="color:${t.change>0?'var(--green)':'var(--sindoor)'};font-weight:800">${t.change>0?'+':''}${t.change}%</td>
+                <td>${t.lead}</td>
+                <td><span class="chip ${t.conf>=85?'ok':t.conf>=75?'warn':'risk'}"><span class="dot"></span>${t.conf}%</span></td>
+                <td>${t.city}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="divider"></div>
+        <div class="grid g-2">
+          <div>
+            <div class="text-sm text-mute" style="margin-bottom:6px">Predicted category Δ · top 8 <span style="font-weight:400">(hover a bar for the trend &amp; category)</span></div>
+            <div class="trend-chart-wrap">
+              <div class="bar-chart" id="deltaBarChart">
+                ${DERIVED.slice(0,8).map((t,i)=>{
+                  const h = Math.min(100, Math.abs(t.change)*3.5);
+                  return `<div class="bar" data-idx="${i}" style="height:${h}%;background:${t.change>0?'linear-gradient(180deg,var(--brand),var(--brand-2))':'linear-gradient(180deg,var(--sindoor),#8f1a1e)'}">
+                    <div class="bar-value">${t.change>0?'+':''}${t.change}%</div>
+                    <div class="bar-label">${t.city}</div>
+                  </div>`;
+                }).join('')}
+              </div>
+              <div class="trend-tooltip" id="deltaBarTooltip"></div>
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-mute" style="margin-bottom:6px">Confidence distribution <span style="font-weight:400">(hover a bar for the trend &amp; category)</span></div>
+            <div class="trend-chart-wrap">
+              <div class="bar-chart" id="confBarChart">
+                ${DERIVED.slice(0,8).map((t,i)=>{
+                  return `<div class="bar" data-idx="${i}" style="height:${t.conf}%;background:linear-gradient(180deg,var(--green),#0a6b2e)">
+                    <div class="bar-value">${t.conf}%</div>
+                    <div class="bar-label">${t.city.slice(0,7)}</div>
+                  </div>`;
+                }).join('')}
+              </div>
+              <div class="trend-tooltip" id="confBarTooltip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    wireBarTooltips('deltaBarChart', 'deltaBarTooltip', t => `${t.trend}<br><b>${t.cat}</b> · ${t.change>0?'+':''}${t.change}% predicted`);
+    wireBarTooltips('confBarChart', 'confBarTooltip', t => `${t.trend}<br><b>${t.cat}</b> · ${t.conf}% confidence`);
+  }
+  else if (currentTsTab === 'iot') {
+    body.innerHTML = `
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-signal','i-sm')} Dashboard 3 · IoT behavior · what's actually happening in India</h3>
+            <p class="card-sub">Ground truth from connected dispensers, packaging &amp; shelf sensors (MQTT, aggregated SKU×pincode×hour).</p>
+          </div>
+          <button class="btn btn-sm" onclick="exportIotCSV()">${icon('i-copy','i-sm')} Export CSV</button>
+        </div>
+        <div class="grid g-3">
+          ${IOT.map(i=>{
+            const cvar = i.color.replace('var(','').replace(')','').trim();
+            const cval = getComputedStyle(document.documentElement).getPropertyValue(cvar) || i.color;
+            return `
+              <div class="card" style="border-left:4px solid ${cval}">
+                <div class="text-sm text-mute">${i.city}</div>
+                <div style="font-weight:800;font-size:14px;margin:4px 0">${i.source}</div>
+                <div style="font-size:28px;font-weight:800;color:${i.change>0?'var(--green)':'var(--sindoor)'}">${i.change>0?'+':''}${i.change}%</div>
+                <div class="text-sm">${i.unit}</div>
+                ${sparkline(Array.from({length:12},(_,k)=>i.change*(0.6+Math.sin(k)*0.1+k/24)), cval)}
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="text-sm text-mute mb-md">Live sensor stream (rolling 60s · IST)</div>
+        <table class="table">
+          <thead><tr><th>Timestamp (IST)</th><th>Sensor</th><th>SKU × Pincode</th><th>Value</th><th>Baseline</th></tr></thead>
+          <tbody id="iotStream"></tbody>
+        </table>
+      </div>
+    `;
+    document.getElementById('iotStream').innerHTML = [
+      ['12:04:22','Dispenser refill','Rexona AP · 110001 Delhi','+22% WoW','baseline 1,200/hr'],
+      ['12:04:19','Shelf restock','Surf Excel liquid · 400001 Mumbai','+16% WoW','baseline 340/hr'],
+      ['12:04:15','Freezer door-opens',"Kwality Wall's · 110016 Delhi",'+31% DoD','baseline 82/hr'],
+      ['12:04:11','Handwash pump','Lifebuoy · 110020 Delhi','+18% WoW','baseline 900/hr'],
+      ['12:04:07','Haircare dispenser','Sunsilk · 110070 Delhi','+14% WoW','baseline 260/hr'],
+      ['12:04:03','Q-com POS','Kissan sq. · 400020 Mumbai','+22% DoD','baseline 45/hr'],
+    ].map(r=>`<tr><td class="text-mute">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td style="color:var(--green);font-weight:700">${r[3]}</td><td class="text-mute">${r[4]}</td></tr>`).join('');
+  }
+  else if (currentTsTab === 'fused') {
+    body.innerHTML = `
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-radar','i-sm')} Dashboard 4 · Fused forecast · macro → micro, before it happens</h3>
+            <p class="card-sub">Fusion confirms the macro trend is really moving behavior · not just noise · by matching it against IoT baseline. Every auto-trigger needs a named human approval first.</p>
+          </div>
+        </div>
+
+        ${FUSED.map(f=>`
+          <div class="fused-card" style="margin-bottom:14px">
+            <div class="flex-between" style="gap:14px;flex-wrap:wrap">
+              <div style="flex:1;min-width:260px">
+                <div class="fused-formula">
+                  <span class="formula-token">① MACRO · ${f.macro}</span>
+                  <span class="formula-op">+</span>
+                  <span class="formula-token">③ IoT · ${f.iot}</span>
+                  <span class="formula-op">via ② prediction ↓</span>
+                </div>
+                <h3 style="margin:6px 0 4px;font-size:16px;color:var(--navy)">${f.category} · ${f.predicted}</h3>
+                <div class="text-sm">${f.action}</div>
+              </div>
+              <div class="fused-conf" style="margin:0">
+                ${confRing(f.conf, '#FF6B1A')}
+                <div>
+                  <div class="text-sm text-mute" title="How strongly the world signal and the real device/sales signal agree">Fused confidence</div>
+                  <div style="font-weight:800;font-size:14px;color:var(--brand-2)">${f.conf}% · above trigger threshold</div>
+                </div>
+              </div>
+            </div>
+            <div class="action-bar">
+              ${approvedIds.has(f.id)
+                ? `<span class="chip ok"><span class="dot"></span>Approved · logged to audit trail</span>`
+                : `<button class="btn btn-ok" onclick="openApprovalModal('${f.id}','approve')">${icon('i-approve','i-sm')} Approve auto-trigger</button>
+                   <button class="btn" onclick="openApprovalModal('${f.id}','edit')">${icon('i-edit','i-sm')} Edit</button>
+                   <button class="btn btn-ghost" onclick="alert('Rejected · signal returned to queue.')">${icon('i-x','i-sm')} Reject</button>`}
+              <span class="text-sm text-mute" style="margin-left:auto">Named approver · Guardrail screens output first · DPDP compliant</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+}
+
+/* ---------- IoT ---------- */
+RENDERERS.iot = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">IoT Signal Layer · India</h1>
+        <p class="page-sub">MQTT adapters on connected packaging, dispensers &amp; shelf sensors across Blinkit / Zepto / Instamart dark stores · the ground truth that keeps TrendScape from only ever hearing what people say.</p>
+      </div>
+    </div>
+    <div class="grid g-4 mb-md">
+      ${[
+        {label:'Connected endpoints', val:'14,220', spark:[10,11,12,13,13.5,14,14.2], color:'var(--green)'},
+        {label:'Signals / hour',      val:'412K',   spark:[300,320,350,370,390,405,412], color:'var(--brand)'},
+        {label:'Uptime (30d)',        val:'99.94%', spark:[99.7,99.8,99.9,99.92,99.94,99.94,99.94], color:'#0284c7'},
+        {label:'Cities live',         val:'12',     spark:[2,4,6,8,10,11,12], color:'var(--gold)'},
+      ].map(k=>`
+        <div class="kpi">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.val}</div>
+          ${sparkline(k.spark, k.color)}
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <h3 class="card-title">${icon('i-package','i-sm')} Connected surfaces · India</h3>
+      </div>
+      <table class="table">
+        <thead><tr><th>Surface</th><th>Brand / SKU</th><th>Endpoints</th><th>City</th><th>Status</th></tr></thead>
+        <tbody>
+          ${[
+            ['Antiperspirant dispenser', 'Rexona · roll-on refill',     '4,120', 'Delhi + Mumbai',   'ok'],
+            ['Shelf sensor',             'Surf Excel liquid detergent', '2,180', 'Mumbai, Chennai',  'ok'],
+            ['Freezer door sensor',      "Kwality Wall's · ice-cream",  '1,540', 'Delhi (heatwave)', 'warn'],
+            ['Connected packaging',      'Dove · BW pump',              '2,340', 'Multi-city',       'ok'],
+            ['Blinkit / Zepto POS feed', 'All HUL SKUs',                '3,020', 'Pan-India · 60 DS','ok'],
+            ['Handwash pump',            'Lifebuoy',                    '1,020', 'Delhi AQI zone',   'ok'],
+          ].map(r=>`
+            <tr>
+              <td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+              <td><span class="chip ${r[4]==='ok'?'ok':'warn'}"><span class="dot"></span>${r[4]==='ok'?'Healthy':'Degraded'}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3 class="card-title">${icon('i-shield','i-sm')} Privacy contract · DPDP Act 2023</h3>
+      </div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.7">
+        Opt-in, anonymized at the edge, aggregated at SKU × pincode × hour, never tied to an identity. Aligned to India's <b>Digital Personal Data Protection Act 2023</b> and GDPR.
+        Every signal carries a source hash and lands in the GDT audit log alongside the decision it later informs.
+      </div>
+    </div>
+  `;
+};
+
+/* ---------- SCORER ---------- */
+RENDERERS.scorer = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Opportunity Scorer · India</h1>
+        <p class="page-sub">Ranks every Indian spike on brand-fit, ROI band and risk; auto-drafts the business case for a named HUL approver.</p>
+      </div>
+      <div class="flex-gap">
+        <select class="btn" id="oPrio" aria-label="Filter by priority"><option value="">All priorities</option><option value="high">High</option><option value="med">Medium</option><option value="low">Low</option></select>
+        <select class="btn" id="oCity" aria-label="Filter by city"><option value="">All cities</option>${[...new Set(OPPORTUNITIES.map(o=>o.city))].map(c=>`<option>${c}</option>`).join('')}</select>
+        <button class="btn btn-primary">${icon('i-approve','i-sm')} Approve all P0</button>
+      </div>
+    </div>
+
+    <div class="grid g-4 mb-md">
+      <div class="kpi"><div class="kpi-label">Queued</div><div class="kpi-value">${OPPORTUNITIES.length}</div><div class="text-sm text-mute">awaiting review</div></div>
+      <div class="kpi"><div class="kpi-label">High priority</div><div class="kpi-value">${OPPORTUNITIES.filter(o=>o.priority==='high').length}</div><div class="text-sm text-mute">Rexona · Kissan · Surf · Dove</div></div>
+      <div class="kpi"><div class="kpi-label">Avg brand-fit</div><div class="kpi-value">80</div><div class="text-sm text-mute">Guardrail threshold: 60</div></div>
+      <div class="kpi"><div class="kpi-label">Median lead time</div><div class="kpi-value">3-day</div><div class="text-sm text-mute">Inside 48–72h spike window</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><h3 class="card-title">${icon('i-target','i-sm')} Ranked opportunities</h3><p class="card-sub">Sorted by brand-fit × ROI, filtered for risk. "Model lift" is computed live by the <a href="#" onclick="navigate('forecast');return false" style="color:var(--brand-2);font-weight:700">Forecast Lab</a> regression.</p></div>
+        <button class="btn btn-sm" onclick="exportOppCSV()">${icon('i-copy','i-sm')} Export CSV</button>
+      </div>
+      <div id="oppList"></div>
+    </div>
+  `;
+
+  function drawOpps() {
+    const prio = document.getElementById('oPrio').value;
+    const city = document.getElementById('oCity').value;
+    const list = OPPORTUNITIES
+      .filter(o => !prio || o.priority === prio)
+      .filter(o => !city || o.city === city);
+    document.getElementById('oppList').innerHTML = list.map(o=>{
+      const est = estimateOpportunityLift(o);
+      return `
+      <div class="queue-row">
+        <div class="queue-priority" style="background:${priorityColor(o.priority)}"></div>
+        <div class="queue-body">
+          <div class="queue-title">${o.title}</div>
+          <div class="queue-meta">
+            <span>${icon('i-flame','i-sm')} ${o.trigger}</span>
+            <span>${icon('i-globe','i-sm')} ${o.city}</span>
+            <span class="chip">${o.lead} lead</span>
+          </div>
+        </div>
+        <div class="queue-scores">
+          <div class="score-item"><span class="score-label">Brand-fit</span><span class="score-value" style="color:${o.brandFit>=80?'var(--green)':o.brandFit>=65?'var(--gold)':'var(--sindoor)'}">${o.brandFit}</span></div>
+          <div class="score-item"><span class="score-label">ROI</span><span class="score-value"><span class="chip ${roiChipClass(o.roi)}">${o.roi}</span></span></div>
+          <div class="score-item"><span class="score-label">Risk</span><span class="score-value"><span class="chip ${riskChipClass(o.risk)}">${o.risk}</span></span></div>
+          <div class="score-item" title="From the Forecast Lab model${est.matched?', using this city\'s real trend confidence':', using brand-fit as a stand-in confidence since no matching trend was found'}"><span class="score-label">Model lift</span><span class="score-value" style="color:${est.lift>=15?'var(--green)':est.lift>=5?'var(--gold)':'var(--sindoor)'}">${est.lift>=0?'+':''}${est.lift.toFixed(1)}%</span></div>
+        </div>
+        <div class="flex-gap">
+          ${approvedIds.has(o.id)
+            ? `<span class="chip ok"><span class="dot"></span>Approved</span>`
+            : `<button class="btn btn-ok btn-sm" onclick="openApprovalModal('${o.id}','approve')">${icon('i-approve','i-sm')} Approve</button>
+               <button class="btn btn-sm" onclick="openApprovalModal('${o.id}','edit')">${icon('i-edit','i-sm')} Edit</button>`}
+        </div>
+      </div>
+    `;
+    }).join('') || `<div class="text-mute" style="padding:24px;text-align:center">No opportunities match your filters.</div>`;
+  }
+  drawOpps();
+  document.getElementById('oPrio').addEventListener('change', drawOpps);
+  document.getElementById('oCity').addEventListener('change', drawOpps);
+};
+
+/* ---------- FORECAST LAB (a real, in-browser trained model) ---------- */
+RENDERERS.forecast = function(root) {
+  const m = FORECAST_MODEL;
+  const [b0, b1, b2] = m.beta;
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Forecast Lab <span class="badge-live">MODEL TRAINED · ${m.n} samples</span></h1>
+        <p class="page-sub">A real multiple-linear-regression model, fit with ordinary least squares on every derived trend in this dashboard the moment the page loads. Change the sliders below and it recomputes live, it isn't a lookup table.</p>
+      </div>
+    </div>
+
+    <div class="grid g-4 mb-md">
+      <div class="kpi"><div class="kpi-label">Model fit (R²)</div><div class="kpi-value">${(m.r2*100).toFixed(1)}%</div><div class="text-sm text-mute">Share of variance explained</div></div>
+      <div class="kpi"><div class="kpi-label">Mean absolute error</div><div class="kpi-value">±${m.mae.toFixed(1)}pt</div><div class="text-sm text-mute">On predicted % lift</div></div>
+      <div class="kpi"><div class="kpi-label">Training rows</div><div class="kpi-value">${m.n}</div><div class="text-sm text-mute">Live from DERIVED trends</div></div>
+      <div class="kpi"><div class="kpi-label">Method</div><div class="kpi-value" style="font-size:18px">OLS · 2 features</div><div class="text-sm text-mute">Confidence % · lead days</div></div>
+    </div>
+
+    <div class="card mb-md" style="background:var(--warn-soft);border-color:var(--gold)">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="color:#7a4d00;flex-shrink:0;margin-top:1px">${icon('i-alert','i-sm')}</span>
+        <div class="text-sm" style="color:#7a4d00;line-height:1.6">
+          <b>Read this before trusting the numbers.</b> This model is trained on only ${m.n} rows with 2 features, small samples like this can look like a great fit (high R²) just by chance. Treat it as a working illustration of how a fused-confidence model would learn and predict, not a production forecast. A real deployment would train on thousands of historical trend outcomes.
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g-8-4 mb-md">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">${icon('i-target','i-sm')} Actual vs. predicted lift</h3>
+            <p class="card-sub">Each dot is one trend the model trained on. Points closer to the diagonal are better fits. Hover for detail.</p>
+          </div>
+          <button class="btn btn-sm" onclick="downloadSvg('scatterSvg','actual-vs-predicted.svg')">${icon('i-copy','i-sm')} Export SVG</button>
+        </div>
+        <div id="scatterChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">${icon('i-cpu','i-sm')} Learned coefficients</h3></div>
+        <div class="text-sm" style="line-height:2.1">
+          <div>Intercept (b₀) &nbsp; <b>${b0.toFixed(2)}</b></div>
+          <div>Confidence weight (b₁) &nbsp; <b>${b1.toFixed(3)}</b> pt lift per 1pt confidence</div>
+          <div>Lead-time weight (b₂) &nbsp; <b>${b2.toFixed(3)}</b> pt lift per day of lead</div>
+        </div>
+        <div class="divider"></div>
+        <div class="text-sm text-mute">Formula</div>
+        <div class="text-sm" style="font-family:monospace;background:var(--surface-2);padding:10px;border-radius:8px;margin-top:6px">
+          lift = ${b0.toFixed(2)} + ${b1.toFixed(3)}×conf + ${b2.toFixed(3)}×leadDays
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-radar','i-sm')} Try the model</h3>
+          <p class="card-sub">Feed it a hypothetical signal and it predicts the category lift, computed by the trained model above, live.</p>
+        </div>
+      </div>
+      <div class="grid g-2">
+        <div>
+          <div class="field">
+            <label>Fused confidence: <b id="confLabel">85</b>%</label>
+            <div class="text-sm text-mute" style="margin:-2px 0 6px">How strongly the world signal and the real device/sales signal agree.</div>
+            <input type="range" id="confSlider" min="50" max="99" value="85" class="video-scrub" style="background:var(--bg)" aria-label="Fused confidence percent"/>
+          </div>
+          <div class="field">
+            <label>Lead time: <b id="leadLabel">5</b> days</label>
+            <div class="text-sm text-mute" style="margin:-2px 0 6px">Days between detecting the trend and the predicted shelf impact.</div>
+            <input type="range" id="leadSlider" min="1" max="14" value="5" class="video-scrub" style="background:var(--bg)" aria-label="Lead time in days"/>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;background:var(--surface-2);border-radius:12px;padding:20px">
+          <div class="text-sm text-mute">Model-predicted category lift</div>
+          <div id="predOutput" style="font-size:40px;font-weight:800;color:var(--brand)">+0.0%</div>
+          <div id="predBand" class="chip ok"><span class="dot"></span>Computed live</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  renderScatterChart(document.getElementById('scatterChart'));
+
+  const confSlider = document.getElementById('confSlider');
+  const leadSlider = document.getElementById('leadSlider');
+  function updatePrediction() {
+    const conf = parseInt(confSlider.value, 10);
+    const lead = parseInt(leadSlider.value, 10);
+    document.getElementById('confLabel').textContent = conf;
+    document.getElementById('leadLabel').textContent = lead;
+    const pred = predictLift(conf, lead);
+    const out = document.getElementById('predOutput');
+    out.textContent = `${pred>=0?'+':''}${pred.toFixed(1)}%`;
+    out.style.color = pred >= 0 ? 'var(--green)' : 'var(--sindoor)';
+    const band = document.getElementById('predBand');
+    band.className = `chip ${pred>=15?'ok':pred>=5?'warn':'risk'}`;
+    band.innerHTML = `<span class="dot"></span>${pred>=15?'Strong signal':pred>=5?'Moderate signal':'Weak signal'}`;
+  }
+  confSlider.addEventListener('input', updatePrediction);
+  leadSlider.addEventListener('input', updatePrediction);
+  updatePrediction();
+};
+
+function renderScatterChart(container) {
+  const w = 400, h = 320, pad = 36;
+  const m = FORECAST_MODEL;
+  const all = [...m.rows.map(r=>r.y), ...m.preds];
+  const lo = Math.min(...all) - 2, hi = Math.max(...all) + 2;
+  const scale = v => pad + ((v - lo) / (hi - lo)) * (w - 2*pad);
+  const scaleY = v => h - pad - ((v - lo) / (hi - lo)) * (h - 2*pad);
+
+  const diag = `<line x1="${scale(lo)}" y1="${scaleY(lo)}" x2="${scale(hi)}" y2="${scaleY(hi)}" stroke="#d8c8a4" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  const dots = m.rows.map((r,i) => {
+    const cx = scale(r.y), cy = scaleY(m.preds[i]);
+    return `<circle class="trend-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="var(--brand)" opacity="0.8"
+      data-label="${r.label}" data-actual="${r.y}" data-pred="${m.preds[i].toFixed(1)}" data-city="${r.city}"/>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="trend-chart-wrap">
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:320px" id="scatterSvg">
+        <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#d8c8a4" stroke-width="1"/>
+        <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#d8c8a4" stroke-width="1"/>
+        <text x="${w/2}" y="${h-8}" text-anchor="middle" font-size="10" fill="#8f7d5f">Actual % lift</text>
+        <text x="10" y="${h/2}" text-anchor="middle" font-size="10" fill="#8f7d5f" transform="rotate(-90 10 ${h/2})">Predicted % lift</text>
+        ${diag}
+        ${dots}
+      </svg>
+      <div class="trend-tooltip" id="scatterTooltip"></div>
+    </div>
+  `;
+  const tooltip = container.querySelector('#scatterTooltip');
+  container.querySelectorAll('.trend-dot').forEach(dot => {
+    dot.addEventListener('mouseenter', () => {
+      const svg = container.querySelector('#scatterSvg');
+      const rect = svg.getBoundingClientRect();
+      const scaleX = rect.width / w, scaleYv = rect.height / h;
+      tooltip.style.left = (dot.getAttribute('cx') * scaleX) + 'px';
+      tooltip.style.top = (dot.getAttribute('cy') * scaleYv) + 'px';
+      tooltip.innerHTML = `<b>${dot.dataset.label}</b><br>${dot.dataset.city} · actual +${dot.dataset.actual}% · predicted ${dot.dataset.pred>=0?'+':''}${dot.dataset.pred}%`;
+      tooltip.classList.add('show');
+    });
+    dot.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+/* ---------- CREATIVE ---------- */
+RENDERERS.creative = function(root) {
+  const variants = [
+    { title:'Rexona · Delhi heatwave · 15s', fmt:'Video · Hindi',   bg:'linear-gradient(135deg,#FF6A3D,#C1272D)', label:'गर्मी हारेगी,\nRexona जीतेगा।', ok:true },
+    { title:'Rexona · Delhi heatwave · 6s',  fmt:'Video · English', bg:'linear-gradient(135deg,#FF6B1A,#E4A11B)', label:'Beat 42°C. Trust Rexona.',  ok:true },
+    { title:'Rexona · Static · IG',          fmt:'Image · Punjabi', bg:'linear-gradient(135deg,#7c3aed,#FF6B1A)', label:'42°C. ਰੈਕਸੋਨਾ ਸਾਥ ਹੈ।',      ok:true },
+    { title:'Kissan · IPL Final · 10s',      fmt:'Video · English', bg:'linear-gradient(135deg,#0F8B3E,#0284c7)', label:'Cheer Cold. Cheer Kissan.', ok:false },
+    { title:'Surf Excel · Monsoon · 6s',     fmt:'Video · Marathi', bg:'linear-gradient(135deg,#0284c7,#14213D)', label:'दाग अच्छे हैं.\nपाऊस पण.',   ok:true },
+    { title:'Dove · Durga Puja gifting',     fmt:'Image · Bengali', bg:'linear-gradient(135deg,#C1272D,#E4A11B)', label:'পুজোর উপহার,\nডাভের যত্নে।',  ok:true },
+    { title:'Sunsilk · Wedding hair · Delhi',fmt:'Reel · Hindi',    bg:'linear-gradient(135deg,#d946ef,#C1272D)', label:'शादी की चमक,\nSunsilk के साथ।', ok:true },
+    { title:'Vim · Diwali cleaning',         fmt:'Video · Tamil',   bg:'linear-gradient(135deg,#E4A11B,#FF6B1A)', label:'தீபாவளிக்கு\nதயார்!',           ok:true },
+    { title:'Lifebuoy · AQI Delhi · 15s',    fmt:'Video · Hindi',   bg:'linear-gradient(135deg,#4b3a1e,#14213D)', label:'हवा गंदी,\nहाथ साफ।',           ok:true },
+  ];
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Creative Twin Studio · India</h1>
+        <p class="page-sub">Generative engine drafts on-brand video / copy / image variants within hours · Hindi, English, and 8 Indian languages. Every draft passes through Brand Guardrail before publication.</p>
+      </div>
+      <div class="flex-gap">
+        <button class="btn">${icon('i-image','i-sm')} New brief</button>
+        <button class="btn btn-primary">${icon('i-brush','i-sm')} Generate more</button>
+      </div>
+    </div>
+
+    <div class="grid g-3 mb-md">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Active brief</h3></div>
+        <div class="text-sm text-mute">Trigger</div>
+        <div style="font-weight:800;margin-bottom:8px">Heatwave, Delhi NCR · Rexona AP · +22%, 5-day lead</div>
+        <div class="text-sm text-mute">Audience</div>
+        <div style="margin-bottom:8px">Male 18–34 · Delhi NCR · Hindi/English/Punjabi</div>
+        <div class="text-sm text-mute">Guardrail rules</div>
+        <div><span class="chip ok"><span class="dot"></span>Tone: confident, not fear-based</span> <span class="chip brand">ASCI: locked</span></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Formats requested</h3></div>
+        <div class="flex-gap"><span class="chip brand">${icon('i-video','i-sm')} 15s video</span><span class="chip brand">${icon('i-video','i-sm')} 6s bumper</span><span class="chip brand">${icon('i-image','i-sm')} Static · IG</span><span class="chip brand">${icon('i-copy','i-sm')} Copy blocks</span></div>
+        <div class="divider"></div>
+        <div class="text-sm text-mute">Localizations queued</div>
+        <div class="flex-gap mt-md"><span class="chip">Hindi</span><span class="chip">English</span><span class="chip">Punjabi</span><span class="chip">Marathi</span><span class="chip">Tamil</span><span class="chip">Bengali</span></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Turnaround</h3></div>
+        <div style="font-size:28px;font-weight:800;color:var(--brand)">2h 14m</div>
+        <div class="text-sm text-mute">From brief to reviewable variants (previously 2–6 weeks)</div>
+      </div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div>
+          <h3 class="card-title">${icon('i-video','i-sm')} Rendered video · Rexona Delhi heatwave · 15s</h3>
+          <p class="card-sub">Generated end-to-end by Creative Twin Studio from the fused-forecast brief. Play to preview the storyboard.</p>
+        </div>
+        <button class="btn btn-sm" onclick="regenVideo()">${icon('i-brush','i-sm')} Regenerate</button>
+      </div>
+      <div id="videoPlayer"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><h3 class="card-title">${icon('i-image','i-sm')} Drafted variants (${variants.length})</h3></div>
+        <div class="flex-gap"><span class="chip ok"><span class="dot"></span>${variants.filter(v=>v.ok).length} Guardrail-clear</span><span class="chip risk"><span class="dot"></span>${variants.filter(v=>!v.ok).length} Needs sign-off</span></div>
+      </div>
+      <div class="grid g-3">
+        ${variants.map(v=>`
+          <div class="variant-card">
+            <div class="variant-preview" style="background:${v.bg};white-space:pre-line">${v.label}</div>
+            <div class="variant-info">
+              <div class="variant-title">${v.title}</div>
+              <div class="variant-meta">${v.fmt} · ${v.ok?'<span style="color:var(--green)">Guardrail: pass</span>':'<span style="color:var(--sindoor)">Guardrail: review</span>'}</div>
+            </div>
+            <div class="variant-actions">
+              <button class="btn btn-sm btn-ok">${icon('i-approve','i-sm')} Approve</button>
+              <button class="btn btn-sm">${icon('i-edit','i-sm')} Edit</button>
+              <button class="btn btn-sm btn-ghost">${icon('i-broadcast','i-sm')} Send to Activate</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  renderVideoPlayer(document.getElementById('videoPlayer'));
+};
+
+/* ---------- Creative Twin video player (canvas-rendered storyboard, interactive) ---------- */
+const VIDEO_SCENES = [
+  { bg: ['#FF6A3D','#C1272D'], title: 'दिल्ली में 42°C', sub: 'Heatwave alert · Delhi NCR' },
+  { bg: ['#E4A11B','#FF6B1A'], title: 'गर्मी हारेगी', sub: 'Rexona 48h protection' },
+  { bg: ['#7c3aed','#FF6B1A'], title: 'Beat the heat', sub: 'Trust Rexona' },
+  { bg: ['#0F8B3E','#0284c7'], title: 'Rexona जीतेगा', sub: '#BeatTheHeat' },
+];
+let videoState = { playing: false, t: 0, raf: null, canvas: null, ctx: null };
+function renderVideoPlayer(container) {
+  cancelAnimationFrame(videoState.raf);
+  container.innerHTML = `
+    <div class="video-wrap">
+      <div class="video-badge">Creative Twin · Preview</div>
+      <div class="video-rendering"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>Guardrail-clear</div>
+      <canvas class="video-canvas" id="videoCanvas" width="1280" height="480"></canvas>
+      <div class="video-controls">
+        <button class="video-play-btn" id="videoPlayBtn" aria-label="Play or pause preview">${icon('i-video','i-sm')}</button>
+        <input type="range" class="video-scrub" id="videoScrub" min="0" max="1000" value="0" aria-label="Video scrub position"/>
+        <span class="video-time" id="videoTime">0:00 / 0:15</span>
+      </div>
+    </div>
+  `;
+  const canvas = document.getElementById('videoCanvas');
+  const ctx = canvas.getContext('2d');
+  videoState.canvas = canvas; videoState.ctx = ctx;
+
+  function draw(t) {
+    const dur = 15000;
+    const progress = (t % dur) / dur;
+    const sceneCount = VIDEO_SCENES.length;
+    const sceneIdx = Math.min(sceneCount - 1, Math.floor(progress * sceneCount));
+    const scene = VIDEO_SCENES[sceneIdx];
+    const localT = (progress * sceneCount) % 1;
+
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, scene.bg[0]);
+    grad.addColorStop(1, scene.bg[1]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // simple ambient particles to sell motion
+    ctx.globalAlpha = 0.18;
+    for (let i = 0; i < 22; i++) {
+      const px = (i * 97 + t / 20) % canvas.width;
+      const py = (i * 53 + Math.sin((t / 400) + i) * 40) % canvas.height;
+      ctx.beginPath();
+      ctx.arc(px, py, 3 + (i % 4), 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    const fade = localT < 0.15 ? localT / 0.15 : (localT > 0.85 ? (1 - localT) / 0.15 : 1);
+    ctx.globalAlpha = Math.max(0.15, fade);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 46px Inter, sans-serif';
+    ctx.fillText(scene.title, canvas.width / 2, canvas.height / 2 - 6);
+    ctx.font = '600 20px Inter, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.fillText(scene.sub, canvas.width / 2, canvas.height / 2 + 34);
+    ctx.globalAlpha = 1;
+
+    document.getElementById('videoScrub').value = Math.round(progress * 1000);
+    const secs = Math.floor((t % dur) / 1000);
+    document.getElementById('videoTime').textContent = `0:${String(secs).padStart(2,'0')} / 0:15`;
+  }
+
+  draw(videoState.t);
+
+  function loop(ts) {
+    if (!videoState._last) videoState._last = ts;
+    const delta = ts - videoState._last;
+    videoState._last = ts;
+    if (videoState.playing) {
+      videoState.t += delta;
+      draw(videoState.t);
+    }
+    videoState.raf = requestAnimationFrame(loop);
+  }
+  videoState._last = null;
+  videoState.raf = requestAnimationFrame(loop);
+
+  document.getElementById('videoPlayBtn').addEventListener('click', () => {
+    videoState.playing = !videoState.playing;
+    document.getElementById('videoPlayBtn').innerHTML = videoState.playing
+      ? `<svg class="i-sm" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16"/><rect x="14" y="4" width="5" height="16"/></svg>`
+      : icon('i-video','i-sm');
+  });
+  document.getElementById('videoScrub').addEventListener('input', (e) => {
+    videoState.t = (e.target.value / 1000) * 15000;
+    draw(videoState.t);
+  });
+}
+function regenVideo() {
+  toast('Creative Twin re-rendering · new take queued for Guardrail review');
+  const idx = Math.floor(Math.random() * VIDEO_SCENES.length);
+  VIDEO_SCENES.push(VIDEO_SCENES.splice(idx, 1)[0]);
+  videoState.t = 0;
+  renderVideoPlayer(document.getElementById('videoPlayer'));
+}
+
+/* ---------- ACTIVATE ---------- */
+RENDERERS.activate = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Localization &amp; Media Agent · India</h1>
+        <p class="page-sub">Auto-localizes assets, buys media on Meta / YouTube / JioAds / Hotstar, and triggers IoT-linked restocking on Blinkit / Zepto / Instamart · same-day from a signed-off recommendation.</p>
+      </div>
+    </div>
+
+    <div class="grid g-4 mb-md">
+      <div class="kpi"><div class="kpi-label">Runs today</div><div class="kpi-value">9</div><div class="text-sm text-mute">6 approved · 3 pending</div></div>
+      <div class="kpi"><div class="kpi-label">Median localize</div><div class="kpi-value">42 min</div><div class="text-sm text-mute">Was 1–2 wks</div></div>
+      <div class="kpi"><div class="kpi-label">Dark stores restocked</div><div class="kpi-value">147</div><div class="text-sm text-mute">Blinkit + Zepto + Instamart</div></div>
+      <div class="kpi"><div class="kpi-label">Media spend today</div><div class="kpi-value">${inr(26500000)}</div><div class="text-sm text-mute">Under ₹4 Cr daily cap</div></div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head"><h3 class="card-title">${icon('i-broadcast','i-sm')} Active runs</h3></div>
+      <table class="table">
+        <thead><tr><th>Run</th><th>Trigger</th><th>Localize</th><th>Media buy</th><th>Restock</th><th>Status</th></tr></thead>
+        <tbody>
+          ${[
+            ['Rexona · Delhi heatwave',    'Heatwave dot × AP dispenser refill','Hindi, English, Punjabi','Meta + JioAds · ₹77 L',  '60 Delhi + NCR dark stores', 'running'],
+            ['Kissan · IPL Final surge',   'IPL Final × Q-com POS',             'English, Hindi',         'Hotstar + YT · ₹1.07 Cr','40 Mumbai + Bengaluru DS',   'pending'],
+            ['Surf Excel · Mumbai monsoon','Monsoon onset × shelf restock',     'Marathi, Hindi',         'Meta + JioAds · ₹52 L',  '32 Mumbai + Pune DS',        'running'],
+            ['Dove · Durga Puja · Kolkata','Pandal season × gifting POS',       'Bengali, English',       'Meta + JioAds · ₹38 L',  'Kolkata gifting SKUs',       'queued'],
+            ['Sunsilk · Delhi weddings',   'Wedding season × dispenser',        'Hindi',                  'Meta · ₹28 L',           'Delhi NCR gifting SKUs',     'queued'],
+          ].map(r=>`
+            <tr>
+              <td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
+              <td><span class="chip ${r[5]==='running'?'ok':r[5]==='pending'?'warn':'brand'}"><span class="dot"></span>${r[5]}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3 class="card-title">${icon('i-package','i-sm')} IoT restocking loop · Delhi heatwave</h3></div>
+      <div class="loop-diagram">
+        <div class="loop-node active"><div class="loop-node-num">1</div><b>Predicted lift</b><div class="text-sm text-mute">+22% refill in 5 days</div></div>
+        <div class="loop-node active"><div class="loop-node-num">2</div><b>Media buy</b><div class="text-sm text-mute">Auto-buy · ₹77 L</div></div>
+        <div class="loop-node active"><div class="loop-node-num">3</div><b>Localize creative</b><div class="text-sm text-mute">3 languages, 42 min</div></div>
+        <div class="loop-node active"><div class="loop-node-num">4</div><b>Restock trigger</b><div class="text-sm text-mute">60 dark stores · Blinkit</div></div>
+        <div class="loop-node"><div class="loop-node-num">5</div><b>Signal Loop</b><div class="text-sm text-mute">Attribution back to forecast</div></div>
+      </div>
+    </div>
+  `;
+};
+
+/* ---------- GUARDRAIL ---------- */
+RENDERERS.guardrail = function(root) {
+  const queue = [
+    { id:'g1', title:'Kissan · IPL Final · comparative claim', reason:'Comparative advertising · needs substantiation (ASCI)', risk:'High', color:'var(--sindoor)' },
+    { id:'g2', title:'Rexona · Delhi heatwave · Hindi copy',   reason:'Tone check: "मत डरो" flagged as fear-based',            risk:'Med',  color:'var(--gold)' },
+    { id:'g3', title:'Lifebuoy · AQI hygiene · claim gate',    reason:'Health-benefit claim needs medical desk sign-off',      risk:'Med',  color:'var(--gold)' },
+  ];
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Brand Guardrail · India</h1>
+        <p class="page-sub">Compliance / tone / legal-risk agent screens every LLM output before a named human approver signs off. ASCI + DPDP aligned. No auto-trigger ships without this gate.</p>
+      </div>
+    </div>
+
+    <div class="grid g-4 mb-md">
+      <div class="kpi"><div class="kpi-label">Screened (24h)</div><div class="kpi-value">184</div><div class="text-sm text-mute">avg 1.4s per asset</div></div>
+      <div class="kpi"><div class="kpi-label">Auto-cleared</div><div class="kpi-value">92%</div><div class="text-sm text-mute">169 assets</div></div>
+      <div class="kpi"><div class="kpi-label">Human review</div><div class="kpi-value">15</div><div class="text-sm text-mute">3 open now</div></div>
+      <div class="kpi"><div class="kpi-label">Blocked</div><div class="kpi-value">0</div><div class="text-sm text-mute">No compliance breaches</div></div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head">
+        <div><h3 class="card-title">${icon('i-shield','i-sm')} Awaiting sign-off (3)</h3><p class="card-sub">Named approver: Priya M. · HUL Brand Ops</p></div>
+      </div>
+      ${queue.map(q=>`
+        <div class="queue-row">
+          <div class="queue-priority" style="background:${q.color}"></div>
+          <div class="queue-body">
+            <div class="queue-title">${q.title}</div>
+            <div class="queue-meta">${q.reason}</div>
+          </div>
+          <div class="flex-gap">
+            <span class="chip ${q.risk==='Low'?'ok':q.risk==='Med'?'warn':'risk'}">${q.risk} risk</span>
+            <button class="btn btn-ok btn-sm" onclick="openApprovalModal('${q.id}','approve')">${icon('i-approve','i-sm')} Approve</button>
+            <button class="btn btn-sm">${icon('i-edit','i-sm')} Request edit</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="grid g-2">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Rule library · India</h3></div>
+        <div class="flex-gap">
+          <span class="chip brand">HUL brand voice</span>
+          <span class="chip brand">ASCI code</span>
+          <span class="chip brand">Comparative advertising</span>
+          <span class="chip brand">Health / medical claims</span>
+          <span class="chip brand">BCCI / IPL trademark</span>
+          <span class="chip brand">Regional sensitivities</span>
+          <span class="chip brand">DPDP Act 2023</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Audit log</h3></div>
+        <div class="text-sm" style="line-height:1.9">
+          <div>12:03 · Cleared: Rexona AP · 15s Hindi</div>
+          <div>11:58 · Flagged: Kissan IPL · trademark check</div>
+          <div>11:47 · Cleared: Surf Excel · 6s Marathi</div>
+          <div>11:41 · Cleared: Sunsilk wedding · static</div>
+          <div>11:33 · Edited: Lifebuoy AQI · tone rewritten</div>
+        </div>
+        <div class="text-sm text-mute mt-md">Every signal → decision → outcome is logged for GDT.</div>
+      </div>
+    </div>
+  `;
+};
+
+/* ---------- SIGNAL LOOP ---------- */
+RENDERERS.loop = function(root) {
+  root.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Signal Loop · India</h1>
+        <p class="page-sub">Real-time attribution feeds outcomes back into forecasting &amp; brand-health models · closing the loop from Activate back to Sense.</p>
+      </div>
+    </div>
+
+    <div class="card mb-md">
+      <div class="card-head"><h3 class="card-title">${icon('i-repeat','i-sm')} End-to-end lifecycle · currently learning</h3></div>
+      <div class="loop-diagram">
+        <div class="loop-node active"><div class="loop-node-num">1</div><b>SENSE</b><div class="text-sm text-mute">TrendScape + IoT</div></div>
+        <div class="loop-node active"><div class="loop-node-num">2</div><b>DECIDE</b><div class="text-sm text-mute">Scorer + Guardrail</div></div>
+        <div class="loop-node active"><div class="loop-node-num">3</div><b>CREATE</b><div class="text-sm text-mute">Creative Twin</div></div>
+        <div class="loop-node active"><div class="loop-node-num">4</div><b>ACTIVATE</b><div class="text-sm text-mute">Localize · Media · Restock</div></div>
+        <div class="loop-node active"><div class="loop-node-num">5</div><b>LEARN</b><div class="text-sm text-mute">Signal Loop · this</div></div>
+      </div>
+    </div>
+
+    <div class="grid g-2 mb-md">
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Attribution feed (last 24h · India)</h3></div>
+        <table class="table">
+          <thead><tr><th>Activation</th><th>Predicted</th><th>Realized</th><th>Δ vs. forecast</th></tr></thead>
+          <tbody>
+            ${[
+              ['Rexona · Delhi heatwave',     '+22% refill (5d)','+19% (day 3)','−3pt'],
+              ['Kissan · IPL Final',          '+24% (2d)',       '+27%',        '+3pt'],
+              ['Surf Excel · Mumbai monsoon', '+16% (3d)',       '+14%',        '−2pt'],
+              ['Dove · Durga Puja gifting',   '+21% (10d)',      'tracking',    '·'],
+            ].map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 class="card-title">Feedback into forecasting</h3></div>
+        <div class="text-sm" style="line-height:1.8">
+          <p>Realized lift is joined back with the fused-forecast confidence at signal time, refining the geo-time weights used to score the next Indian spike.</p>
+          <p>Brand-health tracking (share of voice, sentiment, awareness · by state) is pulled forward continuously instead of arriving in a post-campaign PDF weeks later.</p>
+        </div>
+        <div class="divider"></div>
+        <div class="grid g-3">
+          <div class="kpi" style="padding:12px"><div class="kpi-label">Forecast error</div><div class="kpi-value" style="font-size:20px">2.4pt</div><div class="text-sm text-mute">−1.1pt WoW</div></div>
+          <div class="kpi" style="padding:12px"><div class="kpi-label">Loop latency</div><div class="kpi-value" style="font-size:20px">&lt; 4h</div><div class="text-sm text-mute">was weeks</div></div>
+          <div class="kpi" style="padding:12px"><div class="kpi-label">Models updated</div><div class="kpi-value" style="font-size:20px">6</div><div class="text-sm text-mute">rolling last 24h</div></div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+/* =====================================================
+   MODAL / APPROVAL
+   ===================================================== */
+let approvedIds = new Set();
+let notifReadIds = new Set();
+async function loadPersistentState() {
+  if (!window.storage) return;
+  try {
+    const r = await window.storage.get('approved-ids');
+    if (r && r.value) JSON.parse(r.value).forEach(id => approvedIds.add(id));
+  } catch (e) { /* key not set yet */ }
+  try {
+    const r2 = await window.storage.get('notif-read-ids');
+    if (r2 && r2.value) JSON.parse(r2.value).forEach(id => notifReadIds.add(id));
+  } catch (e) { /* key not set yet */ }
+}
+async function saveApprovedIds() {
+  if (!window.storage) return;
+  try { await window.storage.set('approved-ids', JSON.stringify([...approvedIds])); } catch (e) {}
+}
+async function saveNotifReadIds() {
+  if (!window.storage) return;
+  try { await window.storage.set('notif-read-ids', JSON.stringify([...notifReadIds])); } catch (e) {}
+}
+
+function openApprovalModal(id, mode='approve') {
+  if (approvedIds.has(id) && mode !== 'edit') {
+    toast('Already approved earlier · see the audit trail');
+    return;
+  }
+  const f = FUSED.find(x=>x.id===id);
+  const o = OPPORTUNITIES.find(x=>x.id===id);
+  document.getElementById('modalTitle').textContent = mode === 'edit' ? 'Edit recommendation' : 'Approve auto-trigger';
+  document.getElementById('modalSub').textContent = 'Named HUL approver required · Guardrail-cleared · ASCI compliant';
+  const body = document.getElementById('modalBody');
+  if (f) {
+    body.innerHTML = `
+      <div class="grid g-2">
+        <div class="field"><label>Fused confidence <span class="text-mute" style="font-weight:400">· how strongly the world signal and real behavior agree</span></label><input value="${f.conf}%" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>Category</label><input value="${f.category}" ${mode==='edit'?'':'disabled'}/></div>
+      </div>
+      <div class="field"><label>Prediction</label><input value="${f.predicted}" ${mode==='edit'?'':'disabled'}/></div>
+      <div class="field"><label>Recommended action</label><textarea rows="2" ${mode==='edit'?'':'disabled'}>${f.action}</textarea></div>
+      <div class="field"><label>Approver note (optional)</label><textarea rows="2" placeholder="Log a rationale for the audit trail…"></textarea></div>
+      <div class="text-sm text-mute">On approval, Creative Twin drafts variants (Hindi + regional), Guardrail screens them, and Localization &amp; Media agent executes on Meta / YouTube / JioAds / Blinkit.</div>
+    `;
+  } else if (o) {
+    body.innerHTML = `
+      <div class="grid g-2">
+        <div class="field"><label>Trigger</label><input value="${o.trigger}" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>City</label><input value="${o.city}" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>Brand-fit</label><input value="${o.brandFit}" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>ROI</label><input value="${o.roi}" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>Risk</label><input value="${o.risk}" ${mode==='edit'?'':'disabled'}/></div>
+        <div class="field"><label>Lead time <span class="text-mute" style="font-weight:400">· days until predicted shelf impact</span></label><input value="${o.lead}" ${mode==='edit'?'':'disabled'}/></div>
+      </div>
+      <div class="field"><label>Approver note</label><textarea rows="2" placeholder="Log a rationale for the audit trail…"></textarea></div>
+    `;
+  } else {
+    body.innerHTML = `<div class="field"><label>Note</label><textarea rows="3" placeholder="Approver rationale…"></textarea></div>`;
+  }
+  document.getElementById('modalFoot').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-ok" onclick="confirmApproval('${id}')">${icon('i-approve','i-sm')} ${mode==='edit'?'Save & approve':'Approve'}</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+function confirmApproval(id) {
+  closeModal();
+  approvedIds.add(id);
+  saveApprovedIds();
+  toast(`Approved · logged to GDT audit trail (${id.toUpperCase()})`);
+  navigate(currentPage);
+}
+function openDerivedModal(id) {
+  const t = DERIVED.find(x=>x.id===id);
+  if (!t) return;
+  document.getElementById('modalTitle').textContent = t.trend;
+  document.getElementById('modalSub').textContent = `${t.city} · derived from macro signal`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="grid g-3">
+      <div class="kpi"><div class="kpi-label">Category</div><div class="kpi-value" style="font-size:18px">${t.cat}</div></div>
+      <div class="kpi"><div class="kpi-label">Predicted Δ</div><div class="kpi-value" style="color:${t.change>0?'var(--green)':'var(--sindoor)'};font-size:22px">${t.change>0?'+':''}${t.change}%</div></div>
+      <div class="kpi"><div class="kpi-label">Confidence</div><div class="kpi-value" style="font-size:22px">${t.conf}%</div></div>
+    </div>
+    <div class="text-sm mt-md">Lead time <b>${t.lead}</b>. Cross-references live IMD weather, mandi.gov.in prices, news &amp; social APIs and IoT baseline. Feed this into the Opportunity Scorer to auto-draft a business case.</div>
+  `;
+  document.getElementById('modalFoot').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    <button class="btn btn-primary" onclick="closeModal(); navigate('scorer')">Send to Scorer →</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+/* =====================================================
+   NOTIFICATIONS
+   ===================================================== */
+function renderNotifs() {
+  NOTIFS.forEach(n => { if (notifReadIds.has(n.id)) n.unread = false; });
+  const list = document.getElementById('notifList');
+  list.innerHTML = NOTIFS.map(n=>{
+    const cvar = n.color.startsWith('var(') ? n.color.replace('var(','').replace(')','').trim() : null;
+    const cval = cvar ? (getComputedStyle(document.documentElement).getPropertyValue(cvar) || n.color) : n.color;
+    return `
+      <div class="notif-item ${n.unread?'unread':''}" data-id="${n.id}">
+        <div class="notif-icon" style="background:${cval}">${icon(n.icon,'i-sm')}</div>
+        <div style="flex:1;min-width:0">
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-desc">${n.desc}</div>
+          <div class="notif-time">${n.time}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  list.querySelectorAll('.notif-item').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      const n = NOTIFS.find(x=>x.id===item.dataset.id);
+      if (n) { n.unread = false; notifReadIds.add(n.id); saveNotifReadIds(); }
+      renderNotifs();
+      document.getElementById('notifPanel').classList.remove('open');
+      if (n.id === 'n1' || n.id === 'n4') navigate('trendscape');
+      if (n.id === 'n2') navigate('guardrail');
+      if (n.id === 'n3') navigate('scorer');
+    });
+  });
+  const unread = NOTIFS.filter(n=>n.unread).length;
+  const dot = document.querySelector('#notifBtn .dot');
+  if (dot) dot.style.display = unread ? 'block' : 'none';
+}
+function markAllRead() {
+  NOTIFS.forEach(n=>{ n.unread=false; notifReadIds.add(n.id); });
+  saveNotifReadIds();
+  renderNotifs();
+}
+document.getElementById('notifBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('notifPanel').classList.toggle('open');
+});
+document.addEventListener('click', e => {
+  const p = document.getElementById('notifPanel');
+  if (!p.contains(e.target) && e.target.id !== 'notifBtn' && !document.getElementById('notifBtn').contains(e.target)) {
+    p.classList.remove('open');
+  }
+});
+
+/* =====================================================
+   EXPORTS (CSV / SVG download)
+   ===================================================== */
+function downloadFile(filename, content, mime='text/plain') {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function toCSV(rows) {
+  return rows.map(r => r.map(v => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',')).join('\n');
+}
+function exportOppCSV() {
+  const rows = [['Title','Trigger','City','Brand-fit','ROI','Risk','Lead','Model lift %']];
+  OPPORTUNITIES.forEach(o => {
+    const est = estimateOpportunityLift(o);
+    rows.push([o.title, o.trigger, o.city, o.brandFit, o.roi, o.risk, o.lead, est.lift.toFixed(1)]);
+  });
+  downloadFile('opportunities.csv', toCSV(rows), 'text/csv');
+  toast('Exported opportunities.csv');
+}
+function exportIotCSV() {
+  const rows = [['Source','City','Change','Unit']];
+  IOT.forEach(i => rows.push([i.source, i.city, i.change, i.unit]));
+  downloadFile('iot-signals.csv', toCSV(rows), 'text/csv');
+  toast('Exported iot-signals.csv');
+}
+function downloadSvg(svgId, filename) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const clone = svg.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const src = new XMLSerializer().serializeToString(clone);
+  downloadFile(filename, src, 'image/svg+xml');
+  toast(`Exported ${filename}`);
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+function toast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:#14213D;color:white;padding:12px 20px;border-radius:10px;
+    font-size:13px;font-weight:600;z-index:200;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    opacity:0;transition:opacity .2s, transform .2s;
+    border-left:3px solid var(--brand);
+  `;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(-4px)'; });
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 2200);
+}
+
+/* =====================================================
+   GLOBAL SEARCH
+   ===================================================== */
+function runGlobalSearch(q) {
+  const query = q.trim().toLowerCase();
+  const panel = document.getElementById('searchResults');
+  if (!query) { panel.classList.remove('open'); panel.innerHTML = ''; return; }
+
+  const groups = [];
+
+  const trendHits = DERIVED.filter(t => (t.trend+t.cat+t.city).toLowerCase().includes(query)).slice(0,4);
+  if (trendHits.length) groups.push({ label:'Trends', icon:'i-flame', items: trendHits.map(t => ({
+    title: t.trend, meta: `${t.cat} · ${t.city}`, page: 'trendscape'
+  })) });
+
+  const oppHits = OPPORTUNITIES.filter(o => (o.title+o.trigger+o.city).toLowerCase().includes(query)).slice(0,4);
+  if (oppHits.length) groups.push({ label:'Opportunities', icon:'i-target', items: oppHits.map(o => ({
+    title: o.title, meta: `${o.city} · ${o.roi} ROI`, page: 'scorer'
+  })) });
+
+  const festHits = FESTIVALS.filter(f => (f.name+f.cats).toLowerCase().includes(query)).slice(0,4);
+  if (festHits.length) groups.push({ label:'Festivals', icon:'i-diya', items: festHits.map(f => ({
+    title: f.name, meta: `${f.date} · ${f.cats}`, page: 'home'
+  })) });
+
+  const sigHits = MAP_DOTS.filter(d => (d.label+d.city+d.state).toLowerCase().includes(query)).slice(0,4);
+  if (sigHits.length) groups.push({ label:'Live signals', icon:'i-signal', items: sigHits.map(d => ({
+    title: d.label, meta: `${d.city}, ${d.state}`, page: 'trendscape'
+  })) });
+
+  const prodHits = PORTFOLIO.filter(p => (p.name+p.desc).toLowerCase().includes(query)).slice(0,3);
+  if (prodHits.length) groups.push({ label:'AI Products', icon:'i-grid', items: prodHits.map(p => ({
+    title: p.name, meta: p.stage, page: p.key
+  })) });
+
+  if (!groups.length) {
+    panel.innerHTML = `<div class="search-empty">No matches for "${q}"</div>`;
+  } else {
+    panel.innerHTML = groups.map(g => `
+      <div class="search-result-group">
+        <div class="search-result-label">${g.label}</div>
+        ${g.items.map(it => `
+          <div class="search-result-item" data-page="${it.page}">
+            <div class="sig-icon" style="width:26px;height:26px;background:var(--brand)">${icon(g.icon,'i-sm')}</div>
+            <div>
+              <div class="search-result-title">${it.title}</div>
+              <div class="search-result-meta">${it.meta}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
+  }
+  panel.classList.add('open');
+  panel.querySelectorAll('.search-result-item').forEach(el => {
+    el.addEventListener('click', () => {
+      navigate(el.dataset.page);
+      document.getElementById('topSearchInput').value = '';
+      panel.classList.remove('open');
+    });
+  });
+}
+const searchInput = document.getElementById('topSearchInput');
+searchInput.addEventListener('input', (e) => runGlobalSearch(e.target.value));
+searchInput.addEventListener('focus', (e) => { if (e.target.value.trim()) runGlobalSearch(e.target.value); });
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('searchResults');
+  if (!panel.contains(e.target) && e.target !== searchInput) panel.classList.remove('open');
+});
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { searchInput.value=''; document.getElementById('searchResults').classList.remove('open'); searchInput.blur(); }
+});
+
+/* =====================================================
+   MOBILE SIDEBAR
+   ===================================================== */
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); }
+document.getElementById('menuBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+/* =====================================================
+   LIVE HEARTBEAT (keeps a couple of surfaces feeling like
+   a streaming system without needing a real backend)
+   ===================================================== */
+function startLiveHeartbeat() {
+  const IOT_SAMPLES = [
+    ['Dispenser refill',   'Rexona AP · 110001 Delhi'],
+    ['Shelf restock',      'Surf Excel liquid · 400001 Mumbai'],
+    ['Handwash pump',      'Lifebuoy · 110020 Delhi'],
+    ['Q-com POS',          'Kissan sq. · 400020 Mumbai'],
+    ['Haircare dispenser', 'Sunsilk · 110070 Delhi'],
+    ['Freezer door-opens', "Kwality Wall's · 110016 Delhi"],
+  ];
+  setInterval(() => {
+    // Nudge the home page KPI strip so it feels like a live counter, not a screenshot.
+    if (currentPage === 'home') {
+      const kpiEls = document.querySelectorAll('#kpiGrid .kpi-value');
+      if (kpiEls[0] && Math.random() < 0.6) {
+        const cur = parseInt(kpiEls[0].textContent, 10);
+        if (!isNaN(cur)) kpiEls[0].textContent = cur + (Math.random() < 0.7 ? 1 : 0);
+      }
+    }
+    // Stream a new row into the IoT sensor table when that tab is open.
+    if (currentPage === 'trendscape' && currentTsTab === 'iot') {
+      const tbody = document.getElementById('iotStream');
+      if (tbody) {
+        const [source, sku] = IOT_SAMPLES[Math.floor(Math.random()*IOT_SAMPLES.length)];
+        const pct = Math.floor(Math.random()*22)+6;
+        const ts = new Date().toTimeString().slice(0,8);
+        const row = document.createElement('tr');
+        row.innerHTML = `<td class="text-mute">${ts}</td><td><b>${source}</b></td><td>${sku}</td><td style="color:var(--green);font-weight:700">+${pct}% WoW</td><td class="text-mute">live</td>`;
+        tbody.prepend(row);
+        while (tbody.children.length > 8) tbody.removeChild(tbody.lastChild);
+      }
+    }
+  }, 4000);
+}
+
+/* =====================================================
+   INIT
+   ===================================================== */
+document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+  el.addEventListener('click', () => navigate(el.dataset.page));
+});
+(async function initApp() {
+  await loadPersistentState();
+  renderNotifs();
+  navigate('home');
+  startLiveHeartbeat();
+})();
+</script>
+
+</body>
+</html>
