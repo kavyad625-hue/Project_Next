@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Partnr Working Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1D2B53;--blue:#2F4C9E;--blue2:#E9EEFB;--yellow:#FFCB2B;--yellow2:#FFF4CF;--surface:#F5F6FA;--line:#E4E7EF;--muted:#6B7385;--green:#1E9E5A;--green2:#E4F6EC;--red:#D6453D;--red2:#FDECEA}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Poppins,system-ui,sans-serif;color:var(--navy);background:#E8EBF2;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:flex-start;gap:28px;padding:20px 16px}
+button{font-family:inherit}
+.side{max-width:330px;font-size:13px;line-height:1.5;padding-top:10px}
+.side h1{font-size:20px}.side h3{font-size:14px;margin-top:14px}.side ul{padding-left:18px}.side li{margin:3px 0}
+.side .note{background:#FFF4CF;border:1px solid #F2D77A;border-radius:10px;padding:8px 10px;margin-top:10px;font-size:12px}
+.device{width:390px;height:800px;border-radius:44px;background:#0F1220;padding:10px;box-shadow:0 20px 50px rgba(29,43,83,.25);flex:none}
+#phone{position:relative;width:100%;height:100%;background:#fff;border-radius:34px;overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:760px){body{padding:0;display:block}.side{display:none}.device{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}#phone{border-radius:0}}
+.sbar{height:30px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 22px;font-size:12px;font-weight:600}
+#screen{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 16px}
+.scroll::-webkit-scrollbar{display:none}
+.appbar{display:flex;align-items:center;gap:10px;padding:6px 16px 10px;font-weight:600;font-size:16px;flex:none}
+.iconbtn{width:34px;height:34px;border-radius:50%;background:var(--surface);display:grid;place-items:center;border:none;cursor:pointer;color:var(--navy);flex:none}
+.nav{flex:none;display:flex;border-top:1px solid var(--line);background:#fff;height:62px}
+.nav button{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--muted);cursor:pointer;position:relative}
+.nav button.on{color:var(--navy);font-weight:600}
+.nav button.call{background:var(--yellow);color:var(--navy);font-weight:600}
+.badge{position:absolute;top:6px;right:18px;background:var(--red);color:#fff;font-size:9px;border-radius:10px;padding:1px 5px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:none;background:var(--blue);color:#fff;font-weight:600;font-size:14px;border-radius:14px;height:50px;cursor:pointer}
+.btn.y{background:var(--yellow);color:var(--navy)}.btn.o{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}.btn.g{background:var(--green)}.btn.r{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sm{height:36px;font-size:12.5px;border-radius:10px;width:auto;padding:0 14px}
+.btn:disabled{opacity:.5}
+.foot{flex:none;padding:10px 16px 16px;border-top:1px solid var(--line);background:#fff}
+.card{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.stack>*+*{margin-top:10px}
+.flex{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+.muted{color:var(--muted)}.sm{font-size:11.5px}.xs{font-size:10.5px}
+.h1{font-size:22px;font-weight:700;line-height:1.25}.h2{font-size:15px;font-weight:600}.h3{font-size:13px;font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface);border:none;color:var(--navy);cursor:pointer}
+.chip.b{background:var(--blue2);color:var(--blue)}.chip.g{background:var(--green2);color:var(--green)}.chip.y{background:var(--yellow2);color:#7A5B00}.chip.r{background:var(--red2);color:var(--red)}
+.chip.sel{background:var(--blue);color:#fff}
+.input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:14px;background:#fff;color:var(--navy)}
+.lbl{font-size:11.5px;color:var(--muted);margin-bottom:4px}
+.circ{border-radius:50%;background:var(--surface);display:grid;place-items:center;flex:none}
+.tile{border:none;border-radius:16px;padding:12px 6px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:inherit}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.catbtn{border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;color:var(--navy);font-family:inherit}
+.bubble{max-width:84%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.45}
+.bubble.me{margin-left:auto;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.bubble.ai{background:var(--surface);border-bottom-left-radius:4px}
+.hl{background:rgba(255,203,43,.5);border-radius:3px}
+.parchi{font-family:Caveat,cursive;font-size:21px;line-height:1.3;color:#1a2a6c}
+/* notification */
+#notif{position:absolute;top:34px;left:10px;right:10px;z-index:50;transform:translateY(-140%);transition:transform .35s ease;background:rgba(255,255,255,.98);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.22);padding:12px;border:1px solid var(--line)}
+#notif.show{transform:translateY(0)}
+#toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:12.5px;padding:8px 14px;border-radius:10px;opacity:0;transition:opacity .3s;z-index:60;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+.speaking{position:absolute;right:14px;bottom:78px;z-index:40;background:var(--navy);color:#fff;border-radius:999px;padding:6px 10px;font-size:11px;display:none;align-items:center;gap:6px}
+.speaking.show{display:flex}
+.wave{display:flex;gap:3px;align-items:center;height:60px;justify-content:center}
+.wave i{display:block;width:5px;background:var(--blue);border-radius:4px;animation:wv 1s infinite ease-in-out}
+@keyframes wv{0%,100%{height:10px}50%{height:50px}}
+.pulse{animation:pl 1.4s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(47,76,158,.45)}100%{box-shadow:0 0 0 22px rgba(47,76,158,0)}}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -8px 24px rgba(0,0,0,.18);padding:16px;z-index:30;max-height:85%;overflow-y:auto}
+.scrim{position:absolute;inset:0;background:rgba(15,20,40,.45);z-index:29}
+.tl{position:relative;padding-left:20px}
+.tl:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl .st{position:relative;margin-bottom:10px;font-size:12.5px}
+.tl .st:before{content:"";position:absolute;left:-19px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--line);border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.tl .st.done:before{background:var(--green);box-shadow:0 0 0 1px var(--green)}
+.tl .st.now:before{background:var(--yellow);box-shadow:0 0 0 1px #E0A800}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.tabs::-webkit-scrollbar{display:none}
+.cam{position:relative;flex:1;background:#111;overflow:hidden}
+.cam video,.cam img{width:100%;height:100%;object-fit:cover}
+.frame{position:absolute;left:12%;right:12%;top:18%;bottom:26%;border:3px solid var(--yellow);border-radius:18px}
+.shutter{width:70px;height:70px;border-radius:50%;border:5px solid #fff;background:var(--yellow);cursor:pointer}
+.dist{transition:all .4s}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.qty button{width:28px;height:28px;border:none;background:var(--surface);cursor:pointer;font-size:15px;color:var(--navy)}
+.qty span{min-width:26px;text-align:center;font-weight:600;font-size:13px}
+.progress{height:7px;background:var(--line);border-radius:6px;overflow:hidden}.progress>div{height:100%;background:var(--yellow);border-radius:6px;transition:width .4s}
+</style>
+</head>
+<body>
+<div class="side">
+  <h1>Partnr: working prototype</h1>
+  <p class="muted">Concept prototype for the Partnr × ProdMan case competition. Not a real app; prices and data are illustrative.</p>
+  <h3>Try this</h3>
+  <ul>
+    <li>Pick <b>Hinglish</b> or <b>हिन्दी</b>. The app talks back in that language (turn sound on).</li>
+    <li>Tap <b>Bolo</b> and say: <i>"Splendor ke brake shoe do set aur 20W40 ke chaar dabbe, Pulsar ki clutch plate"</i>. Use Chrome and allow the mic.</li>
+    <li>Tap the camera → <b>Parchi</b> tab → capture. The AI reads the parchi into a cart.</li>
+    <li>A part not in the dark store goes to the <b>anonymous Partnr Network</b>.</li>
+    <li>Watch for Swiggy-style notifications on the home screen, or trigger them from Profile.</li>
+  </ul>
+  <div class="note">Voice uses your browser's speech recognition (Chrome works best). Parchi and part reading from photos is simulated for the demo; you can edit the detected text to test the Hinglish parser.</div>
+</div>
+<div class="device"><div id="phone">
+  <div class="sbar"><span id="clock">10:42</span><span id="sbarR">▲ 74%</span></div>
+  <div id="screen"></div>
+  <div id="notif"></div>
+  <div id="toast"></div>
+  <div class="speaking" id="speaking"><span>🔊</span><span id="speakTxt">Bol raha hoon…</span></div>
+</div></div>
+
+<script>
+// ================= ICONS =================
+const ic={back:'<path d="M15 18l-6-6 6-6"/>',chev:'<path d="M9 6l6 6-6 6"/>',home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/>',box:'<path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/>',phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',check:'<path d="M5 12l5 5 9-10"/>',truck:'<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',pin:'<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',share:'<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>',bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',wallet:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h5M3 9h18"/>',gift:'<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5"/><circle cx="17" cy="9" r="2.8"/><path d="M16 14.5c2.8 0 4.8 1.5 5.5 4.5"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',store:'<path d="M3 9l2-5h14l2 5M4 9v11h16V9"/><path d="M9 20v-6h6v6"/>',tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',coin:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4"/>',lang:'<path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 6 8M11 5c-1 4-4 7-7 8"/><path d="M13 21l4-9 4 9M14.5 18h5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',net:'<circle cx="12" cy="12" r="2.5"/><circle cx="4.5" cy="6" r="2"/><circle cx="19.5" cy="6" r="2"/><circle cx="4.5" cy="18" r="2"/><circle cx="19.5" cy="18" r="2"/><path d="M6.2 7.2l3.8 3.4M17.8 7.2L14 10.6M6.2 16.8l3.8-3.4M17.8 16.8L14 13.4"/>',vol:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',mute:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/>',ret:'<path d="M4 10h11a5 5 0 0 1 0 10H9"/><path d="M8 6l-4 4 4 4"/>',doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>',plate:'<rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 12h3M11 12h7"/>',scan:'<path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><path d="M4 12h16"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'};
+const I=(n,s=18,c='currentColor',w=1.9)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${ic[n]||''}</svg>`;
+const PG={oil:'<rect x="7" y="7" width="10" height="13" rx="2" fill="#2F4C9E"/><rect x="9" y="4" width="4" height="3" fill="#1D2B53"/><rect x="8.5" y="11" width="7" height="4" rx="1" fill="#FFCB2B"/>',shoe:'<path d="M5 15a7 7 0 0 1 14 0" stroke="#555" stroke-width="3" fill="none"/><path d="M6.5 15a5.5 5.5 0 0 1 11 0" stroke="#C9A36A" stroke-width="1.5" fill="none"/>',chain:'<circle cx="8" cy="12" r="5" fill="none" stroke="#666" stroke-width="2"/><circle cx="17" cy="12" r="3" fill="none" stroke="#666" stroke-width="2"/><path d="M8 7h9M8 17h9" stroke="#666" stroke-width="1.5"/>',clutch:'<circle cx="12" cy="12" r="7" fill="none" stroke="#7a7a7a" stroke-width="3"/><circle cx="12" cy="12" r="3" fill="none" stroke="#b08b4f" stroke-width="2"/>',cable:'<path d="M5 18c4-10 10 2 14-12" stroke="#444" stroke-width="2" fill="none"/><circle cx="5" cy="18" r="1.5" fill="#444"/><circle cx="19" cy="6" r="1.5" fill="#444"/>',plug:'<rect x="10" y="3" width="4" height="5" fill="#ccc"/><rect x="9" y="8" width="6" height="5" fill="#fff" stroke="#999"/><rect x="10.5" y="13" width="3" height="6" fill="#888"/>',filter:'<rect x="6" y="6" width="12" height="12" rx="3" fill="#3B7D4E"/><path d="M8 9h8M8 12h8M8 15h8" stroke="#fff" stroke-width="1"/>',pad:'<rect x="5" y="8" width="14" height="8" rx="3" fill="#777"/><rect x="7" y="10" width="10" height="4" rx="2" fill="#C9A36A"/>'};
+const PI=(g,s=28)=>`<div class="circ" style="width:${s+16}px;height:${s+16}px"><svg width="${s}" height="${s}" viewBox="0 0 24 24">${PG[g]}</svg></div>`;
+
+// ================= CATALOGUE =================
+const MODELS={splendor_plus:'Splendor Plus',super_splendor:'Super Splendor',pulsar150:'Pulsar 150',activa:'Activa 6G',shine:'Honda Shine',cd_deluxe:'CD Deluxe'};
+const TYPES={
+ brake_shoe:{name:'Brake Shoe',g:'shoe',needModel:true,price:{splendor_plus:240,super_splendor:250,pulsar150:290,activa:260,shine:255,cd_deluxe:235},brands:['Minda','Partnr']},
+ brake_pad:{name:'Brake Pad (disc)',g:'pad',needModel:true,price:{pulsar150:340,shine:320,super_splendor:310},brands:['TVS Girling','Partnr']},
+ clutch_plate:{name:'Clutch Plate Set',g:'clutch',needModel:true,price:{splendor_plus:540,super_splendor:560,pulsar150:620,shine:580,cd_deluxe:520},brands:['Endurance','Partnr']},
+ chain_kit:{name:'Chain Sprocket Kit',g:'chain',needModel:true,price:{splendor_plus:760,super_splendor:790,pulsar150:980,shine:820,cd_deluxe:780},brands:['Rolon','Partnr']},
+ air_filter:{name:'Air Filter',g:'filter',needModel:true,price:{splendor_plus:180,super_splendor:190,pulsar150:240,activa:210,shine:230,cd_deluxe:175},brands:['Uno Minda','Partnr']},
+ clutch_cable:{name:'Clutch Cable',g:'cable',needModel:true,price:{splendor_plus:150,super_splendor:160,pulsar150:190,shine:170,cd_deluxe:145},brands:['Suprajit','Partnr']},
+ accel_cable:{name:'Accelerator Cable',g:'cable',needModel:true,price:{splendor_plus:140,super_splendor:150,pulsar150:175,activa:165,shine:160,cd_deluxe:135},brands:['Suprajit','Partnr']},
+ engine_oil:{name:'20W40 Engine Oil 1L',g:'oil',needModel:false,price:{any:310},brands:['Partnr','Castrol'],brandPrice:{Partnr:310,Castrol:345}},
+ spark_plug:{name:'Spark Plug',g:'plug',needModel:false,price:{any:120},brands:['Bosch','NGK']},
+ bulb:{name:'Headlight Bulb',g:'plug',needModel:false,price:{any:95},brands:['Philips','Partnr']},
+ horn:{name:'Horn',g:'plug',needModel:false,price:{any:220},brands:['Minda','Roots']},
+ mirror:{name:'Rear View Mirror (pair)',g:'cable',needModel:true,price:{splendor_plus:160,super_splendor:170,pulsar150:210,activa:190,shine:175,cd_deluxe:150},brands:['Partnr']},
+ side_stand:{name:'Side Stand',g:'cable',needModel:true,price:{splendor_plus:280,super_splendor:290,pulsar150:340,shine:300,cd_deluxe:270},brands:['Partnr']},
+ relay:{name:'Self Starter Relay',g:'plug',needModel:true,price:{splendor_plus:240,super_splendor:250,pulsar150:290,activa:260,shine:250},brands:['Uno Minda']},
+ visor:{name:'Headlight Visor',g:'cable',needModel:true,price:{pulsar150:420,splendor_plus:380,shine:390},brands:['Partnr']}
+};
+const OUT={'clutch_plate|pulsar150':1,'air_filter|activa':1,'visor|pulsar150':1,'visor|splendor_plus':1,'visor|shine':1,'relay|activa':1,'side_stand|pulsar150':1}; // not in dark store -> Partnr Network
+const pid=(t,m)=>t+'|'+(m||'any');
+function prod(id){const [t,m]=id.split('|');if(t==='custom'){const c=st.custom[id];return {id,t,m:c.model||'any',name:c.name,g:'cable',model:c.model?MODELS[c.model]:'Aapki gaadi',price:c.price,brands:['Network'],out:true,custom:true};}const T=TYPES[t];return {id,t,m,name:T.name,g:T.g,model:m==='any'?'All 4-stroke bikes':MODELS[m],price:T.price[m]||T.price.any,brands:T.brands,out:!!OUT[id]};}
+
+// ================= LANGUAGE =================
+const LANGS={hi:{label:'हिन्दी',sub:'Hindi',sr:'hi-IN',tts:'hi-IN'},hn:{label:'Hinglish',sub:'Hindi + English',sr:'hi-IN',tts:'hi-IN'},en:{label:'English',sub:'English',sr:'en-IN',tts:'en-IN'}};
+const TX={
+ tagline:{hi:'मैकेनिक का अपना पार्ट्स पार्टनर',hn:'Mechanic ka apna parts partner',en:"The mechanic's own parts partner"},
+ choose:{hi:'अपनी भाषा चुनें',hn:'Apni bhasha chunein',en:'Choose your language'},
+ next:{hi:'आगे बढ़ें',hn:'Aage badhein',en:'Continue'},
+ loginH:{hi:'अपना मोबाइल नंबर डालें',hn:'Apna mobile number daalein',en:'Enter your mobile number'},
+ verify:{hi:'OTP वेरिफाई करें',hn:'Verify karein',en:'Verify'},
+ kycH:{hi:'Partnr पर खरीदने के लिए खुद को वेरिफाई करें',hn:'Verify yourself to start buying on Partnr',en:'Verify yourself to start buying on Partnr'},
+ kycS:{hi:'बंपर ऑफ़र पाने के लिए KYC पूरा करें',hn:'Complete KYC to unlock bumper offers',en:'Complete KYC to unlock bumper offers'},
+ startVer:{hi:'वेरिफिकेशन शुरू करें',hn:'Start Verification',en:'Start Verification'},
+ submit:{hi:'जमा करें',hn:'Submit',en:'Submit'},
+ verified:{hi:'वेरिफिकेशन पूरा!',hn:'Verification complete!',en:'Verification complete!'},
+ start:{hi:'शुरू करें',hn:'Shuru karein',en:"Let's start"},
+ search:{hi:'पार्ट या गाड़ी का नाम…',hn:'Part ya gaadi ka naam…',en:'Part or bike name…'},
+ bolo:{hi:'बोलो',hn:'Bolo',en:'Speak'},boloS:{hi:'बोलकर ऑर्डर',hn:'Voice order',en:'Voice order'},
+ parchi:{hi:'पर्ची',hn:'Parchi',en:'Parchi'},parchiS:{hi:'फ़ोटो भेजो',hn:'Photo bhejo',en:'Snap your list'},
+ scan:{hi:'स्कैन',hn:'Scan',en:'Scan'},scanS:{hi:'पार्ट / नंबर प्लेट',hn:'Part / number plate',en:'Part / number plate'},
+ cats:{hi:'कैटेगरी',hn:'Categories',en:'Categories'},
+ listening:{hi:'सुन रहा हूँ… अपनी लिस्ट बोलिए',hn:'Sun raha hoon… apni list boliye',en:'Listening… say your list'},
+ done:{hi:'हो गया',hn:'Ho gaya',en:'Done'},
+ cart:{hi:'कार्ट',hn:'Cart',en:'Cart'},
+ order:{hi:'ऑर्डर करें',hn:'Order karein',en:'Place order'},
+ fixed:{hi:'आज का दाम = कल का दाम',hn:'Aaj ka daam = kal ka daam',en:"Today's price = tomorrow's price"},
+ pay:{hi:'भुगतान',hn:'Payment',en:'Payment'},
+ placed:{hi:'ऑर्डर हो गया!',hn:'Order ho gaya!',en:'Order placed!'},
+ track:{hi:'ट्रैक करें',hn:'Track karein',en:'Track order'},
+};
+const SP={ // what the app says aloud
+ welcome:{hi:'नमस्ते! Partnr में आपका स्वागत है।',hn:'Namaste! Partnr mein aapka swagat hai.',en:'Namaste! Welcome to Partnr.'},
+ lang:{hi:'मैं आपसे हिन्दी में बात करूँगा।',hn:'Main aapse Hinglish mein baat karunga.',en:'I will talk to you in English.'},
+ kyc:{hi:'दुकान की जानकारी भरिए, एक मिनट लगेगा।',hn:'Dukaan ki details bhariye, ek minute lagega.',en:'Fill in your shop details, it takes a minute.'},
+ home:{hi:'बोलिए, पर्ची भेजिए, या स्कैन कीजिए। जो आसान लगे।',hn:'Boliye, parchi bhejiye, ya scan kijiye. Jo aasaan lage.',en:'Speak, send a parchi photo, or scan. Whatever is easiest.'},
+ voice:{hi:'बोलिए, क्या चाहिए?',hn:'Boliye bhai, kya chahiye?',en:'Tell me what you need.'},
+ cam:{hi:'पर्ची को पीले डिब्बे में रखिए और फ़ोटो लीजिए।',hn:'Parchi ko peele dabbe mein rakhiye aur photo lijiye.',en:'Keep the parchi inside the yellow box and take a photo.'},
+ camPlate:{hi:'नंबर प्लेट दिखाइए, मैं गाड़ी पहचान लूँगा।',hn:'Number plate dikhaiye, main gaadi pehchaan lunga.',en:'Show the number plate, I will identify the bike.'},
+ camPart:{hi:'पुराना पार्ट दिखाइए, मैं पहचान लूँगा।',hn:'Purana part dikhaiye, main pehchaan lunga.',en:'Show the old part, I will identify it.'},
+ reading:{hi:'पर्ची पढ़ रहा हूँ।',hn:'Parchi padh raha hoon.',en:'Reading your parchi.'},
+ cart:(n)=>({hi:`आपका कार्ट तैयार है, ${n} आइटम। एक बार देख लीजिए।`,hn:`Aapka cart tayyar hai, ${n} items. Ek baar dekh lijiye.`,en:`Your cart is ready with ${n} items. Please check once.`}),
+ net:{hi:'यह पार्ट आपके स्टोर में नहीं है। आसपास के डिस्ट्रीब्यूटर से मँगा रहा हूँ।',hn:'Yeh part aapke store mein nahi hai. Aaspaas ke distributor se mangwa raha hoon.',en:'This part is not in your store. Checking nearby distributors.'},
+ netOk:{hi:'मिल गया! पाँच बजे तक पहुँच जाएगा।',hn:'Mil gaya! Paanch baje tak pahunch jayega.',en:'Found it! It will reach you by 5 pm.'},
+ pay:{hi:'पेमेंट का तरीका चुनिए। क्रेडिट पर पंद्रह दिन बाद भी दे सकते हैं।',hn:'Payment ka tarika chuniye. Credit pe pandrah din baad bhi de sakte ho.',en:'Choose how to pay. With credit you can pay in 15 days.'},
+ placed:{hi:'ऑर्डर हो गया! पहली डिलीवरी दो घंटे में।',hn:'Order ho gaya! Pehli delivery do ghante mein.',en:'Order placed! First delivery in two hours.'},
+ track:{hi:'राइडर रास्ते में है।',hn:'Rider raaste mein hai.',en:'The rider is on the way.'},
+ profile:{hi:'यह आपकी प्रोफ़ाइल है।',hn:'Yeh aapki profile hai.',en:'This is your profile.'},
+ orders:{hi:'आपके ऑर्डर।',hn:'Aapke orders.',en:'Your orders.'},
+ cats:{hi:'कौन सा पार्ट चाहिए?',hn:'Kaunsa part chahiye?',en:'Which part do you need?'},
+ call:{hi:'बोलकर ऑर्डर कीजिए, मैं सुन रहा हूँ।',hn:'Bolke order kijiye, main sun raha hoon.',en:'Order by speaking, I am listening.'},
+ ret:{hi:'कोई बात नहीं, अगले राइडर के साथ मुफ़्त वापसी।',hn:'Koi baat nahi, agle rider ke saath free wapsi.',en:'No problem, free pickup with the next rider.'},
+ miss:{hi:'जो पार्ट आपके पास नहीं है, वो मैं Partnr नेटवर्क से आसपास के डिस्ट्रीब्यूटर से मँगवा दूँगा।',hn:'Jo part aapke paas nahi hai, woh main Partnr Network se aaspaas ke distributor se mangwa dunga.',en:'Parts you do not have, I will source from nearby distributors on the Partnr Network.'},
+ finder:{hi:'कोई बात नहीं! कौन सा पार्ट चाहिए? नाम बोलिए, या पुराने पार्ट की फ़ोटो भेजिए। मैं Partnr नेटवर्क से मँगवा दूँगा।',hn:'Koi baat nahi! Kaunsa part chahiye? Naam boliye ya purane part ki photo bhejiye. Main Partnr Network se mangwa dunga.',en:'No problem! Which part do you need? Say its name or send a photo of the old part. I will get it from the Partnr Network.'},
+ notFound:{hi:'माफ़ कीजिए, समझ नहीं आया। फिर से बोलिए या पर्ची भेजिए।',hn:'Maaf kijiye, samajh nahi aaya. Phir se boliye ya parchi bhejiye.',en:"Sorry, I didn't get that. Please say it again or send a parchi."},
+};
+const NT={ // Swiggy-style notifications
+ price:{t:{hi:'🛢️ आज बाहर Castrol महँगा है!',hn:'🛢️ Aaj bahar Castrol mehnga hai!',en:'🛢️ Castrol is costly outside today!'},b:{hi:'बाज़ार में Castrol 20W40 ₹380 का है। Partnr पर ₹345, ₹35 सस्ता पड़ेगा। अभी ले लो?',hn:'Market mein Castrol 20W40 ₹380 ka hai. Humse lo ₹345 mein, ₹35 kam padega. Abhi le lo?',en:'Castrol 20W40 is ₹380 in the market. Get it for ₹345 on Partnr and save ₹35.'},a:{hi:'कार्ट में डालो',hn:'Cart mein daalo',en:'Add to cart'},act:'addCastrol'},
+ reorder:{t:{hi:'🔁 पिछली बार वाला फिर से?',hn:'🔁 Pichhli baar wala phir se?',en:'🔁 Same as last time?'},b:{hi:'आपने 12 दिन पहले 10 लीटर 20W40 मँगाया था। अभी भी स्टॉक में है, फिर से ऑर्डर करना चाहोगे?',hn:'Aapne 12 din pehle 10L 20W40 order kiya tha. Abhi bhi stock mein hai, order karna chahoge?',en:'You ordered 10L of 20W40 12 days ago. It is still in stock. Order again?'},a:{hi:'हाँ, भेजो',hn:'Haan, bhejo',en:'Yes, reorder'},act:'reorder'},
+ monsoon:{t:{hi:'☔ बारिश आई, ब्रेक की बारी!',hn:'☔ Baarish aayi, brake ki baari!',en:'☔ Rain is here, brakes are next!'},b:{hi:'इस हफ़्ते ब्रेक शू की माँग 2 गुना होगी। Splendor Plus के ब्रेक शू अभी ₹240 में स्टॉक कर लो।',hn:'Is hafte brake shoe ki demand double hogi. Splendor Plus brake shoe abhi ₹240 mein stock kar lo.',en:'Brake shoe demand will double this week. Stock Splendor Plus brake shoes now at ₹240.'},a:{hi:'2 सेट डालो',hn:'2 set daalo',en:'Add 2 sets'},act:'addShoe'},
+ back:{t:{hi:'🎉 जो नहीं मिला था, वो आ गया',hn:'🎉 Jo nahi mila tha, woh aa gaya',en:'🎉 Back in stock'},b:{hi:'Pulsar 150 की क्लच प्लेट अब Partnr नेटवर्क पर 5 बजे तक मिल जाएगी।',hn:'Pulsar 150 ki clutch plate ab Partnr Network se 5 baje tak mil jayegi.',en:'Pulsar 150 clutch plate is now available via the Partnr Network by 5 pm.'},a:{hi:'देखो',hn:'Dekho',en:'View'},act:'addClutch'},
+ rider:{t:{hi:'🛵 राइडर निकल गया!',hn:'🛵 Rider nikal gaya!',en:'🛵 Rider is on the way!'},b:{hi:'आपका सामान 18 मिनट में पहुँचेगा। चाय ठंडी होने से पहले 😄',hn:'Aapka saamaan 18 min mein pahunchega. Chai thandi hone se pehle 😄',en:'Your parts arrive in 18 minutes. Before your chai gets cold 😄'},a:{hi:'ट्रैक करो',hn:'Track karo',en:'Track'},act:'track'},
+ delay:{t:{hi:'⚠️ क्लच प्लेट 30 मिनट लेट',hn:'⚠️ Clutch plate 30 min late',en:'⚠️ Clutch plate 30 min late'},b:{hi:'डिस्ट्रीब्यूटर पिकअप में देर। नया समय 5:30। रुकें, दूसरा सोर्स, या कैंसल?',hn:'Distributor pickup mein der. Naya time 5:30. Rukein, doosra source, ya cancel?',en:'Distributor pickup delayed. New time 5:30. Wait, switch source, or cancel?'},a:{hi:'विकल्प देखो',hn:'Options dekho',en:'See options'},act:'delay'},
+ helper:{t:{hi:'👷 राजू ने ऑर्डर बनाया',hn:'👷 Raju ne order banaya',en:'👷 Raju created an order'},b:{hi:'₹2,080 का ऑर्डर आपकी मंज़ूरी के लिए रुका है।',hn:'₹2,080 ka order aapki approval ke liye ruka hai.',en:'A ₹2,080 order is waiting for your approval.'},a:{hi:'देखो',hn:'Dekho',en:'Review'},act:'helper'},
+};
+
+// ================= STATE =================
+const st={custom:{},homeVisits:0,lang:'hn',sound:true,screen:'splash',tab:'Home',cart:[],pending:[],order:null,vehicle:null,coins:240,milestone:1,credit:10000,camMode:'parchi',notifTimers:[],timers:[],cat:null,parchiText:'',history:[]};
+const t=(k)=>{const v=TX[k];return v?(v[st.lang]||v.hn):k;};
+const L3=(o)=>o[st.lang]||o.hn;
+const rs=(n)=>'₹'+Math.round(n).toLocaleString('en-IN');
+
+// ================= SPEECH OUT =================
+let voices=[];function loadVoices(){voices=speechSynthesis?speechSynthesis.getVoices():[];}if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+function say(obj){const txt=typeof obj==='string'?obj:L3(obj);if(!st.sound||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);const lg=LANGS[st.lang].tts;u.lang=lg;const v=voices.find(v=>v.lang===lg)||voices.find(v=>v.lang&&v.lang.startsWith(lg.slice(0,2)));if(v)u.voice=v;u.rate=1;const sp=document.getElementById('speaking');document.getElementById('speakTxt').textContent=txt.length>34?txt.slice(0,34)+'…':txt;sp.classList.add('show');u.onend=()=>sp.classList.remove('show');u.onerror=()=>sp.classList.remove('show');speechSynthesis.speak(u);}catch(e){}}
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200);}
+
+// ================= NOTIFICATIONS =================
+const BUSY=['voice','camera','reading','clarify','network','pay','ret','kyc','kyc2','login','lang','splash'];
+function notify(key,force){const n=NT[key];if(!n)return;if(!force&&BUSY.includes(st.screen))return;if(!force&&Date.now()-(notify.last||0)<45000)return;notify.last=Date.now();const el=document.getElementById('notif');
+ el.innerHTML=`<div class="flex between xs"><span class="flex" style="gap:6px"><span style="width:18px;height:18px;border-radius:5px;background:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:10px">P</span><b>Partnr</b></span><span class="muted">abhi</span></div><div class="h3" style="margin-top:6px">${L3(n.t)}</div><div class="sm" style="margin-top:2px">${L3(n.b)}</div><div class="flex" style="margin-top:10px"><button class="btn sm" data-act="n:${n.act}">${L3(n.a)}</button><button class="btn sm o" data-act="n:close">${st.lang==='en'?'Later':st.lang==='hi'?'बाद में':'Baad mein'}</button></div>`;
+ el.classList.add('show');say(n.t);clearTimeout(notify.t);notify.t=setTimeout(()=>el.classList.remove('show'),9000);}
+function schedule(key,ms){st.notifTimers.push(setTimeout(()=>notify(key),ms));}
+function clearNotifs(){st.notifTimers.forEach(clearTimeout);st.notifTimers=[];}
+
+// ================= HINGLISH PARSER =================
+const KW={
+ brake_shoe:[/brake\s*shoe|brek\s*sh|break\s*sh|brake\s*sh|shoe|ब्रेक\s*शू|ब्रेक\s*शु|शू/],
+ brake_pad:[/brake\s*pad|disc\s*pad|pad\b|पैड/],
+ clutch_plate:[/cl[ua]?t?ch\s*pl|clucth\s*pl|cluch\s*pl|plate|क्लच\s*प्लेट|प्लेट/],
+ chain_kit:[/chain|chen|चेन|चैन/],
+ air_filter:[/air\s*filter|filter|filtar|फिल्टर|फ़िल्टर/],
+ clutch_cable:[/cl[ua]?t?ch\s*cab|clutch\s*wire|क्लच\s*केबल|क्लच\s*वायर/],
+ accel_cable:[/accel|race\s*cab|race\s*wire|accelerator|एक्सीलेटर|रेस\s*केबल/],
+ engine_oil:[/20\s*w\s*40|20w40|oil|tel\b|dabb|ऑयल|आयल|ऑइल|तेल|डब्बे|डिब्बे|मोबिल/],
+ spark_plug:[/spark|plug|स्पार्क|प्लग/],
+ bulb:[/bulb|balb|बल्ब/],horn:[/horn|horen|हॉर्न|हार्न/],mirror:[/mirror|sheesha|shisha|शीशा|मिरर/],side_stand:[/side\s*stand|stand|स्टैंड/],
+ relay:[/relay|rilay|self\s*relay|रिले/],visor:[/visor|vizor|headlight\s*cover|वाइज़र|वाइजर|वाईजर/]
+};
+const MK=[[/super\s*splend|सुपर\s*स्प्लें/,'super_splendor'],[/splend[eoa]r\s*(plus|\+|pls)|स्प्लेंडर\s*प्लस|स्प्लेंडर\+/,'splendor_plus'],[/splend[eoa]r|स्प्लेंडर|स्पलेंडर/,'splendor'],[/pulsar|पल्सर/,'pulsar150'],[/activa|एक्टिवा|ऐक्टिवा/,'activa'],[/shine|शाइन/,'shine'],[/deluxe|dlx|delux|cd\s*100|डीलक्स|डिलक्स/,'cd_deluxe']];
+const NUM=[[/\b(ek|one)\b|एक/,1],[/\b(do|two|dono)\b|दो\b|दो /,2],[/\b(teen|three)\b|तीन/,3],[/\b(char|chaar|four)\b|चार/,4],[/\b(paanch|panch|five)\b|पांच|पाँच/,5],[/\b(chhe|che|six)\b|छह|छः/,6],[/\b(das|ten)\b|दस/,10]];
+function qtyOf(s){const d=s.match(/(\d+)\s*(set|pc|piece|dabb|litre|l\b|nos|x|सेट|डब्ब|लीटर)?/);if(d&&!/20\s*w|w\s*40/.test(d[0])&&+d[1]<50&&+d[1]>0){if(!(/20w40|20\s*w\s*40/.test(s)&&(d[1]==='20'||d[1]==='40')))return +d[1];}
+ const s2=s.replace(/20\s*w\s*40/g,'');const d2=s2.match(/\b(\d{1,2})\b/);if(d2&&+d2[1]>0)return +d2[1];for(const [r,n] of NUM)if(r.test(s))return n;return 1;}
+const STOPW=new Set('don doesnt isnt mere mera meri mujhe mujhko humein hamare paas pass nahi nahin nai ni hai hain h tha thi mil milta milti raha rahi rahe mila mili chahiye chaiye chahie ka ki ke ko ek do teen char chaar bhai please plz dena de dedo bhejo bhej aur or and mangwa mangao i dont dont do not have need want the a an for of set piece pc wala wali wale koi bhi stock mein me mai main abhi jaldi hi toh to se par pe is us kar karo sakte sakta chahta chahiye मेरे मेरा मेरी मुझे मुझको हमें पास नहीं नही है हैं था थी मिल मिलता रहा रही मिला चाहिए का की के को भाई भेजो दो एक और भी में से पर तो ही हम चाहता'.split(' '));
+const GENERIC=new Set('yeh ye woh wo vo jo isme ismein isne usme usmein app aap cheez cheezein cheeze samaan saman saaman part parts item items kuch something anything it this that here there in is inside yahan wahan list जो वह वो यह ये इसमें इसमे उसमें ऐप कुछ चीज़ चीज सामान पार्ट यहाँ वहाँ लिस्ट'.split(' '));
+function cleanName(seg){let n=seg.toLowerCase().replace(/\d+/g,' ');MK.forEach(([r])=>{n=n.replace(new RegExp(r.source,'g'),' ');});const toks=n.split(/[\s,.!?'"()\-–—।]+/).filter(w=>w&&!STOPW.has(w)&&!GENERIC.has(w)&&w.length>=2);return toks.map(w=>/[a-z]/.test(w[0])?w[0].toUpperCase()+w.slice(1):w).join(' ');}
+function parse(text){const raw=text.trim();if(!raw)return {items:[],lines:[]};
+ const segs=raw.replace(/\n/g,',').split(/,|\baur\b|\band\b|\bphir\b|और|फिर|।|;|\bor\b/i).map(s=>s.trim()).filter(Boolean);
+ let lastModel=null;const out=[];
+ segs.forEach(seg=>{const s=seg.toLowerCase();let type=null;
+  // specific before generic
+  const order=['clutch_cable','accel_cable','brake_pad','brake_shoe','clutch_plate','chain_kit','air_filter','relay','visor','side_stand','mirror','horn','bulb','engine_oil','spark_plug'];
+  for(const k of order){if(KW[k].some(r=>r.test(s))){type=k;break;}}
+  let model=null;for(const [r,m] of MK){if(r.test(s)){model=m;break;}}
+  if(model)lastModel=model;
+  if(!type){const name=cleanName(seg);if(name.length>=3)out.push({type:'custom',model:model||lastModel,qty:qtyOf(s),src:seg,name});return;}
+  if(TYPES[type].needModel&&!model)model=lastModel;
+  out.push({type,model,qty:qtyOf(s),src:seg});
+ });
+ return {items:out};}
+
+// ================= CART HELPERS =================
+function addItem(id,qty=1,src='',brand=null){const p=prod(id);const ex=st.cart.find(c=>c.id===id);if(ex){ex.qty+=qty;}else st.cart.push({id,qty,src,brand:brand||p.brands[0]});}
+function priceOf(c){if(c.id.startsWith('custom|'))return prod(c.id).price;const T=TYPES[c.id.split('|')[0]];if(T.brandPrice)return T.brandPrice[c.brand]||T.price.any;return prod(c.id).price;}
+function totals(){const sub=st.cart.reduce((a,c)=>a+priceOf(c)*c.qty,0);const off=sub>=1200?Math.round(sub*0.02):0;const del=sub>=1200||sub===0?0:29;return {sub,off,del,total:sub-off+del};}
+function cartCount(){return st.cart.reduce((a,c)=>a+c.qty,0);}
+
+// ================= NAVIGATION =================
+function go(s,opts={}){st.timers.forEach(clearInterval);st.timers=[];stopCam();stopRec();if(opts.push!==false&&st.screen!==s)st.history.push(st.screen);st.screen=s;render();}
+function back(){st.timers.forEach(clearInterval);st.timers=[];const p=st.history.pop();stopCam();stopRec();if(p){st.screen=p;render();}else{st.tab='Home';st.screen='home';render();}}
+const bar=(title,right='')=>`<div class="appbar"><button class="iconbtn" data-act="back">${I('back',16)}</button><div style="flex:1">${title}</div>${right}<button class="iconbtn" data-act="sound" title="Sound">${I(st.sound?'vol':'mute',16)}</button></div>`;
+function nav(){const tabs=[['home','Home','home'],['grid','Categories','cats'],['user','Profile','profile'],['box','Orders','orders']];
+ return `<div class="nav">${tabs.map(([i,l,s])=>`<button class="${st.tab===l?'on':''}" data-act="tab:${s}:${l}">${I(i,20)}<span>${l}</span>${l==='Home'&&cartCount()?'':''}</button>`).join('')}<button class="call" data-act="call">${I('phone',19)}<span>Call to order</span></button></div>`;}
+
+// ================= SCREENS =================
+const R={};
+R.splash=()=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow)"><div style="width:96px;height:96px;border-radius:26px;background:var(--navy);color:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:46px">P</div><div class="h1" style="margin-top:14px">Partnr</div><div class="sm">2W parts in 2 hours</div><button class="btn" style="width:200px;margin-top:40px" data-act="go:lang">Open app</button></div>`;
+R.lang=()=>`<div class="scroll" style="padding-top:20px;text-align:center"><div style="width:74px;height:74px;border-radius:20px;background:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:32px;margin:0 auto">P</div>
+<div class="h1" style="margin-top:14px">${t('choose')}</div><div class="muted sm">${t('tagline')}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;text-align:left">${Object.entries(LANGS).map(([k,v])=>`<button class="card" data-act="lang:${k}" style="cursor:pointer;text-align:left;font-family:inherit;${st.lang===k?'border:2px solid var(--blue);background:var(--blue2)':''}"><div class="h2">${v.label}</div><div class="muted xs">${v.sub}</div></button>`).join('')}
+<div class="card" style="opacity:.5"><div class="h2">मराठी</div><div class="muted xs">Coming soon</div></div></div>
+<div class="flex" style="justify-content:center;margin-top:16px"><button class="chip b" data-act="sound">${I(st.sound?'vol':'mute',14)} App bolega: ${st.sound?'ON':'OFF'}</button></div></div>
+<div class="foot"><button class="btn" data-act="go:login">${t('next')}</button></div>`;
+R.login=()=>`${bar('Login')}<div class="scroll stack"><div class="h1">${t('loginH')}</div><div class="muted sm">OTP SMS pe aayega</div>
+<div class="input flex" style="font-weight:600"><span class="muted">+91</span><input style="border:none;outline:none;font:inherit;flex:1;color:inherit" value="98110 43217"></div>
+<div class="lbl" style="margin-top:16px">OTP (auto-filled)</div><div class="flex" style="gap:8px">${'482173'.split('').map(d=>`<div class="input" style="width:44px;text-align:center;font-weight:700;font-size:16px;padding:10px 0">${d}</div>`).join('')}</div>
+<div class="muted xs">Demo: any number works</div></div><div class="foot"><button class="btn" data-act="go:kyc">${t('verify')}</button></div>`;
+R.kyc=()=>`${bar('<div style="text-align:center">KYC</div>')}<div class="scroll" style="text-align:center">
+<div style="width:200px;height:200px;border-radius:50%;border:2px solid var(--navy);margin:40px auto 0;display:grid;place-items:center;background:var(--yellow2)"><svg width="130" height="130" viewBox="0 0 110 110"><circle cx="55" cy="38" r="18" fill="#F7D9B5"/><path d="M36 30c4-14 34-14 38 0" fill="#2F4C9E"/><rect x="30" y="58" width="50" height="40" rx="18" fill="#FFCB2B"/><circle cx="82" cy="50" r="12" fill="none" stroke="#2F4C9E" stroke-width="4"/><path d="M90 58l10 10" stroke="#2F4C9E" stroke-width="5" stroke-linecap="round"/><path d="M22 60l14 10" stroke="#555" stroke-width="5" stroke-linecap="round"/></svg></div>
+<div class="h2" style="margin-top:26px">${t('kycH')}</div><div class="muted sm">${t('kycS')}</div></div><div class="foot"><button class="btn" data-act="go:kyc2">${t('startVer')}</button></div>`;
+R.kyc2=()=>`${bar('KYC · Step 2 of 3')}<div class="scroll stack"><div class="progress"><div style="width:66%;background:var(--blue)"></div></div>
+<div><div class="lbl">Dukaan ka naam</div><input class="input" value="Rajesh Auto Works"></div>
+<div><div class="lbl">Document (koi ek)</div><div class="flex" style="gap:6px"><button class="chip">GST</button><button class="chip">Udyam</button><button class="chip b">Aadhaar ✓</button></div><div class="input sm" style="margin-top:6px">XXXX XXXX 4521 · Verified</div></div>
+<div><div class="lbl">Dukaan ki photo</div><label class="flex" style="cursor:pointer"><div style="width:70px;height:52px;border-radius:10px;background:linear-gradient(135deg,#cfd6e6,#9aa6c2);display:grid;place-items:center">${I('cam',20,'#fff')}</div><span class="chip g">${I('check',12)} Uploaded</span><input type="file" accept="image/*" capture="environment" hidden></label></div>
+<div><div class="lbl">Location</div><div class="input flex sm">${I('pin',15,'#D6453D')} Sector 21, Faridabad</div></div>
+<div><div class="lbl">Aap kaunsi gaadiyan theek karte ho? (AI ko sahi part chunne mein madad)</div><div class="flex wrap" style="gap:6px">${['Hero','Honda','Bajaj','TVS','Suzuki','EV'].map((b,i)=>`<button class="chip ${i<3?'b':''}" data-act="togglechip">${b}${i<3?' ✓':''}</button>`).join('')}</div></div>
+<div><div class="lbl">Helper (optional)</div><input class="input" value="Raju · 98XXX XX554"></div>
+</div><div class="foot"><button class="btn" data-act="go:kycdone">${t('submit')}</button></div>`;
+R.kycdone=()=>`<div class="scroll" style="text-align:center;padding-top:40px"><div style="width:86px;height:86px;border-radius:50%;background:var(--green2);display:grid;place-items:center;margin:0 auto">${I('check',46,'#1E9E5A',2.5)}</div>
+<div class="h1" style="margin-top:14px">${t('verified')}</div><div class="muted">Rajesh Auto Works</div>
+<div class="card flex" style="margin-top:20px;text-align:left">${I('store',26,'#2F4C9E')}<div><div class="h3">Aapka store: Faridabad Sec-21</div><div class="muted xs">1,200+ parts · 2 ghante mein delivery</div></div></div>
+<div class="card flex" style="margin-top:10px;text-align:left;background:var(--yellow2);border-color:#F2D77A">${I('gift',26,'#7A5B00')}<div><div class="h3">Welcome offer</div><div class="xs">Pehla order: free delivery + free hand cleaner</div></div></div></div>
+<div class="foot"><button class="btn" data-act="go:home:nohist">${t('start')}</button></div>`;
+R.home=()=>{const tt=totals();const need=Math.max(0,1200-tt.sub);return `<div class="scroll stack" style="padding-top:4px">
+<div class="flex between"><div><div class="muted xs">Deliver to</div><div class="h3 flex" style="gap:4px">${I('pin',14,'#D6453D')} Rajesh Auto Works</div></div><div class="flex" style="gap:6px"><span class="chip y">${I('coin',12)} ${st.coins}</span><button class="iconbtn" data-act="sound">${I(st.sound?'vol':'mute',15)}</button><button class="iconbtn" data-act="go:cart" style="position:relative">${I('box',16)}${cartCount()?`<span class="badge" style="top:-3px;right:-3px">${cartCount()}</span>`:''}</button></div></div>
+<div class="input flex" style="padding:10px 12px">${I('search',16,'#6B7385')}<input id="q" placeholder="${t('search')}" style="border:none;outline:none;font:inherit;font-size:13px;flex:1;color:inherit" data-enter="search"><button class="iconbtn" style="width:30px;height:30px;background:var(--blue2)" data-act="voice">${I('mic',15,'#2F4C9E')}</button><button class="iconbtn" style="width:30px;height:30px;background:var(--blue2)" data-act="camera:parchi">${I('cam',15,'#2F4C9E')}</button></div>
+<div class="grid3">
+<button class="tile" style="background:var(--blue);color:#fff" data-act="voice">${I('mic',26,'#fff')}<b style="font-size:14px">${t('bolo')}</b><span class="xs" style="opacity:.85">${t('boloS')}</span></button>
+<button class="tile" style="background:var(--yellow);color:var(--navy)" data-act="camera:parchi">${I('doc',26)}<b style="font-size:14px">${t('parchi')}</b><span class="xs">${t('parchiS')}</span></button>
+<button class="tile" style="background:var(--surface);color:var(--navy)" data-act="camera:part">${I('scan',26,'#2F4C9E')}<b style="font-size:14px">${t('scan')}</b><span class="xs muted">${t('scanS')}</span></button></div>
+<button class="card flex" style="background:var(--blue2);border:none;width:100%;font-family:inherit;text-align:left;cursor:pointer" data-act="n:reorder">${PI('oil',22)}<div style="flex:1"><div class="h3">Aapne 12 din pehle 10L 20W40 liya tha</div><div class="xs muted">Stock khatam hone wala hoga?</div></div><span class="chip b">Reorder</span></button>
+<button class="card flex" style="width:100%;font-family:inherit;text-align:left;cursor:pointer;border-style:dashed" data-act="go:finder">${I('net',22,'#2F4C9E')}<div style="flex:1"><div class="h3">Part nahi mil raha?</div><div class="xs muted">Partnr Network aaspaas se mangwa dega</div></div>${I('chev',15)}</button>
+<div class="card"><div class="h3">${need>0?`${rs(need)} aur = free delivery + 2% off`:'Free delivery + 2% off unlocked! 🎉'}</div><div class="progress" style="margin-top:8px"><div style="width:${Math.min(100,tt.sub/12)}%"></div></div><div class="xs muted" style="margin-top:5px">Milestone ${st.milestone}/5 · 5th order pe free Partnr 20W40 sample 🎁</div></div>
+${st.vehicle?`<div class="card flex sm" style="background:var(--green2);border:none">${I('plate',18,'#1E9E5A')} Gaadi: <b>${MODELS[st.vehicle]}</b> · parts isi ke hisaab se<button class="chip" data-act="clearveh" style="margin-left:auto">${I('x',11)}</button></div>`:''}
+<div class="flex between"><div class="h2">${t('cats')}</div><button class="chip" data-act="tab:cats:Categories">Sab dekho</button></div>
+<div class="grid4">${Object.entries(TYPES).slice(0,8).map(([k,v])=>`<button class="catbtn" data-act="cat:${k}">${PI(v.g,24)}<span>${v.name.replace(' Set','').replace(' 1L','').replace(' (disc)','')}</span></button>`).join('')}</div>
+</div>${nav()}`;};
+R.cats=()=>`<div class="appbar"><div style="flex:1">Categories</div><button class="iconbtn" data-act="sound">${I(st.sound?'vol':'mute',16)}</button></div><div class="scroll stack">
+<div class="input flex">${I('search',16,'#6B7385')}<span class="muted sm">Search categories</span></div>
+${[['Service & Maintenance',['engine_oil','spark_plug','air_filter']],['Brake System',['brake_shoe','brake_pad']],['Clutch & Transmission',['clutch_plate','chain_kit']],['Control Cables',['clutch_cable','accel_cable']]].map(([h,ks])=>`<div class="h3">${h}</div><div class="grid3" style="text-align:center">${ks.map(k=>`<button class="catbtn" data-act="cat:${k}">${PI(TYPES[k].g,30)}<span>${TYPES[k].name}</span></button>`).join('')}</div>`).join('')}
+</div>${nav()}`;
+R.cat=()=>{const k=st.cat,T=TYPES[k];const ms=T.needModel?Object.keys(T.price).filter(m=>!st.vehicle||m===st.vehicle):['any'];return `${bar(T.name)}<div class="scroll stack">
+${st.vehicle?`<div class="chip g">${I('plate',12)} Sirf ${MODELS[st.vehicle]}</div>`:''}
+${ms.map(m=>{const p=prod(pid(k,m));return `<div class="card flex">${PI(T.g,26)}<div style="flex:1"><div class="h3">${p.name}</div><div class="xs muted">Fits ${p.model}</div><div class="flex" style="margin-top:4px;gap:6px"><b>${rs(p.price)}</b>${p.out?`<span class="chip y xs">${I('net',11)} Network · 5 baje</span>`:`<span class="chip g xs">${I('clock',11)} 2 ghante</span>`}</div></div><button class="btn sm" data-act="add:${p.id}">Add</button></div>`;}).join('')}
+<div class="xs muted flex">${I('shield',13)} ${t('fixed')}</div></div>`;};
+R.voice=()=>`${bar(t('bolo'))}<div class="scroll" style="text-align:center">
+<div class="muted sm" id="vstat" style="margin-top:10px">${t('listening')}</div>
+<div class="wave" id="wave" style="margin-top:10px">${Array.from({length:13},(_,i)=>`<i style="animation-delay:${(i%5)*.12}s"></i>`).join('')}</div>
+<div class="card" id="vtext" style="text-align:left;margin-top:10px;min-height:70px;font-size:14px;line-height:1.55">…</div>
+<div class="lbl" style="text-align:left;margin-top:14px">Mic nahi chal raha? Yeh try karo:</div>
+<div class="flex wrap" style="gap:6px">${['Splendor ke brake shoe do set aur 20W40 ke chaar dabbe','Pulsar ki clutch plate aur chain set','स्प्लेंडर के ब्रेक शू दो सेट और चार डब्बे तेल','Activa ka air filter teen, Shine ki clutch cable','Mere paas Pulsar ka headlight visor nahi hai','Jo mere paas nahi hai woh isme nahi hai','Splendor ka silencer guard nahi mil raha'].map(s=>`<button class="chip" data-act="sample" data-text="${s}">${s}</button>`).join('')}</div>
+<div class="input flex" style="margin-top:10px"><input id="vtype" placeholder="Ya yahan likho…" style="border:none;outline:none;font:inherit;flex:1;color:inherit" data-enter="vtype"></div>
+<button class="circ pulse" id="micbtn" data-act="mic" style="width:82px;height:82px;background:var(--blue);border:none;margin:22px auto 0;cursor:pointer">${I('mic',36,'#fff')}</button></div>
+<div class="foot"><button class="btn" data-act="vdone">${t('done')}</button></div>`;
+R.camera=()=>{const modes=[['spare','Spare'],['plate','Number plate'],['part','Scan part'],['parchi','Parchi ✨']];return `<div class="cam" id="cam"><video id="vid" autoplay playsinline muted></video><div id="camfb" style="position:absolute;inset:0;display:none;background:linear-gradient(160deg,#2a2f3d,#11131a)"></div>
+<div class="frame" style="${st.camMode==='plate'?'top:38%;bottom:44%':''}"></div>
+<div style="position:absolute;top:10px;left:12px;right:12px" class="flex between"><button class="iconbtn" data-act="back" style="background:rgba(255,255,255,.2);color:#fff">${I('x',16,'#fff')}</button><span style="color:#fff" class="h3">${st.camMode==='parchi'?'Parchi scan':st.camMode==='plate'?'Number plate':'Part scan'}</span><button class="iconbtn" data-act="sound" style="background:rgba(255,255,255,.2)">${I(st.sound?'vol':'mute',15,'#fff')}</button></div>
+<div style="position:absolute;top:22%;left:0;right:0;text-align:center;color:#fff;font-size:12px;opacity:.9">${st.camMode==='parchi'?'Poori parchi peele dabbe mein rakho':st.camMode==='plate'?'Number plate dabbe mein rakho':'Purana part dabbe mein rakho'}</div>
+<div style="position:absolute;bottom:0;left:0;right:0;padding:12px 12px 22px;background:linear-gradient(transparent,rgba(0,0,0,.7))">
+<div class="tabs" style="justify-content:center">${modes.map(([k,l])=>`<button class="chip ${st.camMode===k?'y':''}" style="${st.camMode===k?'':'background:rgba(255,255,255,.18);color:#fff'}" data-act="cmode:${k}">${l}</button>`).join('')}</div>
+<div class="flex" style="justify-content:center;margin-top:14px;gap:34px"><label class="iconbtn" style="background:rgba(255,255,255,.2);cursor:pointer">${I('doc',16,'#fff')}<input type="file" accept="image/*" hidden id="gal"></label><button class="shutter" data-act="shoot"></button><span style="width:34px"></span></div></div></div>`;};
+R.reading=()=>`${bar('AI padh raha hai')}<div class="scroll stack">
+<div style="border-radius:14px;overflow:hidden;height:190px;background:#FFFDF4;position:relative">${st.snap?`<img src="${st.snap}" style="width:100%;height:100%;object-fit:cover;opacity:.35">`:''}<div class="parchi" style="position:absolute;inset:0;padding:14px 16px;transform:rotate(-1.5deg)">${st.parchiText.split('\n').map(l=>`<span class="hl">${l}</span>`).join('<br>')}</div></div>
+<div class="card flex sm" style="background:var(--green2);border:none">${I('check',16,'#1E9E5A')} ${st.parchiText.split('\n').filter(Boolean).length} lines mili · galti ho toh neeche theek karo</div>
+<div class="lbl">Detected text (edit karke test karo)</div><textarea id="ptext" class="input" rows="5" style="resize:none;line-height:1.5">${st.parchiText}</textarea>
+<div class="xs muted">Demo: handwriting reading is simulated; the Hinglish matching below is real.</div></div>
+<div class="foot"><button class="btn" data-act="pdone">Cart banao</button></div>`;
+R.clarify=()=>{if(!st.pending.length){st.screen='cart';return R.cart();}const p=st.pending[0];const q=p.model==='splendor'?`${st.lang==='en'?'Which Splendor?':st.lang==='hi'?'कौन सा स्प्लेंडर?':'Splendor kaunsa hai bhai?'} 🙂`:(st.lang==='en'?`${TYPES[p.type].name}: for which bike?`:st.lang==='hi'?`${TYPES[p.type].name}: किस गाड़ी का?`:`${TYPES[p.type].name}: kaunsi gaadi ka?`);
+ const opts=p.model==='splendor'?['splendor_plus','super_splendor']:Object.keys(TYPES[p.type].price);
+ return `${bar('Partnr Assistant','<span class="chip g">Online</span>')}<div class="scroll stack" style="padding-top:6px">
+<div class="bubble me">${p.src}</div><div class="bubble ai">${q}</div>
+<div class="flex wrap" style="gap:6px">${opts.map(m=>`<button class="chip b" data-act="pick:${m}">${MODELS[m]}</button>`).join('')}</div>
+<div class="bubble ai flex" style="gap:6px">${I('vol',15,'#2F4C9E')} ${st.lang==='en'?'Tap an option or just say it.':'Option dabao ya bol do.'}</div></div>`;};
+R.cart=()=>{const tt=totals();const anyOut=st.cart.some(c=>prod(c.id).out);return `${bar(`${t('cart')} · ${cartCount()} items`)}<div class="scroll stack">
+${st.cart.length?'':`<div class="card" style="text-align:center;padding:28px"><div class="h3">Cart khaali hai</div><div class="muted sm">Bolo ya parchi bhejo</div><div class="flex" style="justify-content:center;margin-top:10px"><button class="btn sm" data-act="voice">${I('mic',14,'#fff')} Bolo</button><button class="btn sm y" data-act="camera:parchi">${I('doc',14)} Parchi</button></div></div>`}
+${st.cart.map((c,i)=>{const p=prod(c.id);const T=TYPES[p.t]||{brands:p.brands};return `<div class="card"><div class="flex" style="align-items:flex-start">${PI(p.g,24)}<div style="flex:1"><div class="h3">${p.name}</div><div class="xs muted">Fits ${p.model}</div>
+<div class="flex wrap" style="gap:5px;margin-top:5px">${T.brands.map(b=>`<button class="chip ${c.brand===b?'sel':''}" style="padding:3px 8px" data-act="brand:${i}:${b}">${b}${T.brandPrice?' '+rs(T.brandPrice[b]):''}</button>`).join('')}</div>
+<div class="flex between" style="margin-top:6px"><div class="qty"><button data-act="qty:${i}:-1">−</button><span>${c.qty}</span><button data-act="qty:${i}:1">+</button></div><b>${rs(priceOf(c)*c.qty)}</b></div>
+<div style="margin-top:6px">${p.custom?`<span class="chip y">${I('net',12)} Naya part · Partnr Network dhoondhega · price confirm hoga</span>`:p.out?`<span class="chip y">${I('net',12)} Store mein nahi · Partnr Network · 5 baje tak</span>`:`<span class="chip g">${I('clock',12)} 2 ghante mein</span>`}</div></div></div>
+${c.src?`<div class="xs muted" style="margin-top:6px;font-style:italic">📝 "${c.src}"</div>`:''}</div>`;}).join('')}
+${st.cart.length?`<div class="card sm" style="background:${tt.off?'var(--green2)':'var(--yellow2)'};border:none">${I('tag',13)} ${tt.off?`<b>Free delivery + 2% off</b> lag gaya (−${rs(tt.off)})`:`${rs(1200-tt.sub)} aur add karo: free delivery + 2% off`}</div>
+<div class="xs muted flex">${I('shield',13)} ${t('fixed')} · koi mol-bhaav nahi</div>
+<button class="card flex sm" style="width:100%;font-family:inherit;cursor:pointer;text-align:left" data-act="voice">${I('mic',16,'#2F4C9E')} Aur kuch? Bol ke add karo</button>`:''}
+</div>${st.cart.length?`<div class="foot flex between"><div><div class="h2">${rs(tt.total)}</div><div class="xs muted">${tt.off?`<s>${rs(tt.sub)}</s> · `:''}${anyOut?'2 deliveries':'1 delivery'}${tt.del?' · +₹29 delivery':''}</div></div><button class="btn" style="width:auto;padding:0 22px" data-act="checkout">${t('order')}</button></div>`:''}`;};
+R.network=()=>{const outs=st.cart.filter(c=>prod(c.id).out);const p=prod(outs[0].id);return `${bar('Partnr Network')}<div class="scroll stack">
+<div class="card flex" style="background:var(--yellow2);border-color:#F2D77A">${PI(p.g,24)}<div><div class="h3">${p.name} · ${p.model}</div><div class="xs">Aapke store mein nahi hai, network mein dhoondh rahe hain${outs.length>1?` (+${outs.length-1} aur)`:''}</div></div></div>
+<div style="display:grid;place-items:center;height:130px"><div class="circ pulse" style="width:96px;height:96px;background:var(--blue2)">${I('net',60,'#2F4C9E',1.4)}</div></div>
+<div id="dists" class="stack">${[['Distributor #1','4.2 km','★4.7'],['Distributor #2','6.8 km','★4.5'],['Distributor #3','9.1 km','★4.3']].map((d,i)=>`<div class="card flex between dist" id="d${i}"><div><div class="h3">${d[0]} · ${d[1]} · ${d[2]}</div><div class="xs muted" id="ds${i}">Request bheja…</div></div><span class="chip" id="dc${i}">…</span></div>`).join('')}</div>
+<div class="card flex sm" id="netpick" style="display:none">${I('truck',18,'#2F4C9E')}<div><b>4 baje pickup run</b> se aayega · <b>5 baje tak</b> delivery · fixed price ${rs(p.price)}${p.custom?' (distributor ne confirm kiya)':''}</div></div>
+<div class="xs muted flex">${I('shield',13)} Naam aur number dono taraf hidden · payment sirf Partnr se</div></div>
+<div class="foot"><button class="btn" id="netbtn" data-act="go:pay" disabled>Dhoondh rahe hain…</button></div>`;};
+R.pay=()=>{const tt=totals();return `${bar(t('pay'))}<div class="scroll stack">
+<div class="card flex between"><span>Total</span><b style="font-size:17px">${rs(tt.total)}</b></div>
+${[['credit','wallet','Partnr Credit',`15 din baad pay karein · limit ${rs(st.credit)} bacha`],['upi','phone','UPI','GPay / PhonePe / Paytm'],['cod','coin','Cash on delivery','']].map(([k,i,a,b])=>`<button class="card flex" data-act="pm:${k}" style="width:100%;font-family:inherit;text-align:left;cursor:pointer;${(st.pm||'credit')===k?'border:2px solid var(--blue);background:var(--blue2)':''}">${I(i,22,'#2F4C9E')}<div style="flex:1"><div class="h3">${a}</div><div class="xs muted">${b}</div></div></button>`).join('')}
+<div class="card flex sm">${I('coin',20,'#C79300')}<div style="flex:1">${st.coins} coins use karo (${rs(st.coins/10)})</div><input type="checkbox" id="usecoins"></div>
+<div class="card flex sm" style="background:var(--yellow2);border-color:#F2D77A">${I('gift',20,'#7A5B00')} Is order ke saath <b>free hand cleaner</b></div></div>
+<div class="foot"><button class="btn" data-act="place">Pay ${rs(tt.total)}${(st.pm||'credit')==='credit'?' · Credit se':''}</button></div>`;};
+R.placed=()=>{const o=st.order;return `<div class="scroll stack" style="padding-top:30px"><div style="text-align:center"><div style="width:76px;height:76px;border-radius:50%;background:var(--green2);display:grid;place-items:center;margin:0 auto">${I('check',40,'#1E9E5A',2.5)}</div><div class="h1" style="margin-top:10px">${t('placed')}</div><div class="muted sm">#${o.no}</div></div>
+<div class="card"><div class="flex between"><div class="h3">${o.netOnly?'Delivery · Partnr Network':'Delivery 1'} · ${o.d1.length} parts</div><span class="chip ${o.netOnly?'y':'g'}">${o.netOnly?'5 baje tak':'2 ghante'}</span></div><div class="xs muted">${o.d1.map(c=>prod(c.id).name).join(', ')||'—'}</div></div>
+${o.d2.length?`<div class="card"><div class="flex between"><div class="h3">Delivery 2 · ${o.d2.length} part</div><span class="chip y">5 baje tak</span></div><div class="xs muted">${o.d2.map(c=>prod(c.id).name).join(', ')} (Partnr Network)</div></div>`:''}
+<div class="card flex sm" style="background:var(--yellow2);border-color:#F2D77A">${I('gift',22,'#7A5B00')}<div><b>Free hand cleaner</b> isi box mein · Milestone ${st.milestone}/5 · +${o.coins} coins</div></div></div>
+<div class="foot stack"><button class="btn" data-act="go:track:fromplaced">${t('track')}</button><button class="btn o" data-act="go:home:nohist">Home</button></div>`;};
+R.track=()=>{const o=st.order;return `${bar('Order #'+o.no)}<div style="height:230px;flex:none;position:relative;background:#EAF0E6">
+<svg width="100%" height="230" viewBox="0 0 360 230" preserveAspectRatio="none"><path d="M0 70H360M0 170H360M90 0V230M250 0V230" stroke="#fff" stroke-width="12"/><path id="route" d="M50 210 L90 170 L250 170 L250 70 L310 45" stroke="#2F4C9E" stroke-width="3.5" fill="none" stroke-dasharray="7 6"/><circle cx="310" cy="45" r="10" fill="#D6453D"/><g id="rider"><circle r="13" fill="#FFCB2B" stroke="#1D2B53" stroke-width="2.5"/><text y="4" text-anchor="middle" font-size="12">🛵</text></g></svg>
+<div style="position:absolute;top:10px;left:10px" class="chip b" id="eta">Rider · 18 min</div></div>
+<div class="scroll stack" style="padding-top:12px"><div class="h3">${o.netOnly?'Delivery · 5 baje tak (Partnr Network)':'Delivery 1 · 2 ghante mein'}</div><div class="tl" id="tl1"></div>
+${o.d2.length?`<div class="h3">Delivery 2 · 5 baje tak (Network)</div><div class="tl" id="tl2"></div>`:''}
+${o.returned?`<div class="card sm flex" style="background:var(--green2);border:none">${I('ret',16,'#1E9E5A')} Return booked: ${o.returned.name} · pickup 3 pm</div>`:''}
+<button class="btn y" data-act="share">${I('share',17)} Customer ko time bhejo</button>
+<button class="btn o" data-act="go:ret" id="retbtn" style="display:none">${I('ret',16)} Galat part? Free return</button></div>`;};
+R.ret=()=>{const o=st.order;const c=st.retItem||(o&&(o.d1[0]||o.d2[0]));const p=prod(c.id);return `${bar('Part wapas karein')}<div class="scroll stack">
+<div class="card flex">${PI(p.g,24)}<div><div class="h3">${p.name}</div><div class="xs muted">${p.model} · ${rs(priceOf(c))}</div></div></div>
+<div class="lbl">Kya dikkat hai?</div><div class="flex wrap" style="gap:6px">${['Fit nahi hua','Galat part','Toota hua','Nahi chahiye'].map((x,i)=>`<button class="chip ${i===0?'b':''}" data-act="togglechip">${x}</button>`).join('')}</div>
+<div class="lbl">Photo (optional)</div><label class="flex" style="cursor:pointer"><div style="width:64px;height:50px;border-radius:10px;background:var(--surface);display:grid;place-items:center">${I('cam',20,'#2F4C9E')}</div><span class="sm muted">Photo lo</span><input type="file" accept="image/*" capture="environment" hidden></label>
+<div class="card stack" style="background:var(--green2);border:none"><div class="flex h3">${I('truck',18,'#1E9E5A')} Free pickup: agla rider run</div><div class="sm">Sahi part usi run mein aayega. Har return se AI aur behtar match karta hai.</div></div></div>
+<div class="foot"><button class="btn" data-act="retdone">Return + replace karein</button></div>`;};
+R.retok=()=>`${bar('Return booked')}<div class="scroll stack" style="text-align:center;padding-top:20px"><div style="width:76px;height:76px;border-radius:50%;background:var(--green2);display:grid;place-items:center;margin:0 auto">${I('ret',38,'#1E9E5A',2.2)}</div>
+<div class="h1">Return book ho gaya ✓</div><div class="muted sm">${st.lastReturn.name} · ${st.lastReturn.model}</div>
+<div class="card stack" style="text-align:left"><div class="tl"><div class="st done">Return request mili</div><div class="st now"><b>Pickup: aaj 3 pm rider run</b> (free)</div><div class="st">Sahi part usi run mein</div><div class="st">Paisa/credit adjust</div></div></div>
+<div class="card sm flex" style="text-align:left;background:var(--blue2);border:none">${I('spark',18,'#2F4C9E')} Aapke feedback se AI agli baar sahi fitment chunega</div></div>
+<div class="foot stack">${st.order?`<button class="btn" data-act="go:track:fromplaced">Order pe wapas jao</button>`:''}<button class="btn o" data-act="tab:orders:Orders">My Orders</button><button class="btn o" data-act="go:home:nohist">Home</button></div>`;
+R.finder=()=>`${bar('Part dhundo · Partnr Network')}<div class="scroll stack">
+${st.finderSrc?`<div class="bubble me">${st.finderSrc}</div>`:''}<div class="bubble ai">${L3(SP.finder)}</div>
+<div><div class="lbl">Part ka naam</div><input id="fname" class="input" placeholder="Jaise: silencer guard, fork seal, speedometer"></div>
+<div><div class="lbl">Kis gaadi ka?</div><div class="flex wrap" style="gap:6px">${Object.entries(MODELS).map(([k,v])=>`<button class="chip ${st.fbike===k?'sel':''}" data-act="fbike:${k}">${v}</button>`).join('')}<button class="chip ${st.fbike==='other'?'sel':''}" data-act="fbike:other">Doosri</button></div></div>
+<div class="grid3" style="grid-template-columns:1fr 1fr"><button class="tile" style="background:var(--blue);color:#fff" data-act="voice">${I('mic',22,'#fff')}<b>Bolke batao</b></button><button class="tile" style="background:var(--yellow);color:var(--navy)" data-act="camera:part">${I('cam',22)}<b>Photo bhejo</b></button></div>
+<div class="card xs muted flex">${I('shield',14)} Aaspaas ke authorised distributors ko request jayegi. Naam aur number hidden rahenge, payment sirf Partnr se.</div></div>
+<div class="foot"><button class="btn" data-act="finddo">${I('net',17,'#fff')} Partnr Network mein dhundo</button></div>`;
+R.orders=()=>`<div class="appbar"><div style="flex:1">My Orders</div><button class="iconbtn" data-act="sound">${I(st.sound?'vol':'mute',16)}</button></div><div class="scroll stack">
+${st.order?`<button class="card" data-act="go:track" style="width:100%;text-align:left;font-family:inherit;cursor:pointer"><div class="flex between"><div class="h3">#${st.order.no}</div><span class="chip g">Active</span></div><div class="xs muted">${st.order.items} items · ${rs(st.order.total)} · tap to track</div></button>`:''}
+<div class="card"><div class="flex between"><div class="h3">#PT-57104 · 17 Sep</div><span class="chip">Delivered</span></div><div class="xs muted">20W40 Engine Oil 1L × 10 · ₹3,100</div><div class="flex" style="margin-top:8px"><button class="btn sm" data-act="reorder">Phir se order karo</button><button class="btn sm o" data-act="retpast:oil">Return</button></div></div>
+<div class="card"><div class="flex between"><div class="h3">#PT-56220 · 9 Sep</div><span class="chip">Delivered</span></div><div class="xs muted">Brake Shoe Splendor Plus × 4 · ₹960</div><div class="flex" style="margin-top:8px"><button class="btn sm o" data-act="retpast:shoe">Return</button></div></div>
+</div>${nav()}`;
+R.profile=()=>`<div style="background:linear-gradient(180deg,#FFE9A8,#FFF6D8);padding:8px 16px 16px;text-align:center;flex:none;position:relative"><button class="iconbtn" data-act="sound" style="position:absolute;right:16px;top:8px;background:#fff">${I(st.sound?'vol':'mute',15)}</button><div style="width:62px;height:62px;border-radius:50%;background:#fff;margin:0 auto;display:grid;place-items:center">${I('user',32,'#2F4C9E')}</div><div class="h2" style="margin-top:6px">Rajesh Auto Works</div><div class="xs">Sec 21, Faridabad · KYC ✓</div></div>
+<div class="scroll stack" style="padding-top:12px">
+<div class="card"><div class="flex between"><div class="h3">Milestone rewards</div><span class="chip y">${I('coin',12)} ${st.coins} coins</span></div><div class="flex" style="gap:5px;margin-top:8px">${[1,2,3,4,5].map(n=>`<div style="flex:1;height:7px;border-radius:4px;background:${n<=st.milestone?'var(--yellow)':'var(--line)'}"></div>`).join('')}</div><div class="xs muted" style="margin-top:5px">${5-st.milestone} aur orders: free Partnr 20W40 sample 🎁</div></div>
+<div class="card flex">${I('wallet',22,'#2F4C9E')}<div style="flex:1"><div class="h3">Partnr Credit</div><div class="xs muted">${rs(st.credit)} of ₹10,000 bacha · 15 din</div></div></div>
+<button class="card flex" style="width:100%;font-family:inherit;text-align:left;cursor:pointer" data-act="n:helper">${I('users',22,'#2F4C9E')}<div style="flex:1"><div class="h3">Helper: Raju</div><div class="xs muted">₹2,000 se upar approval zaroori</div></div>${I('chev',15)}</button>
+<div class="card"><div class="h3 flex">${I('lang',18)} Language</div><div class="flex" style="gap:6px;margin-top:8px">${Object.entries(LANGS).map(([k,v])=>`<button class="chip ${st.lang===k?'sel':''}" data-act="lang2:${k}">${v.label}</button>`).join('')}</div></div>
+<div class="card"><div class="h3 flex">${I('bell',18)} Notifications (demo)</div><div class="flex wrap" style="gap:6px;margin-top:8px">${[['price','Castrol sasta'],['reorder','Reorder'],['monsoon','Monsoon brakes'],['back','Back in stock'],['rider','Rider nikla'],['helper','Helper order']].map(([k,l])=>`<button class="chip b" data-act="demo:${k}">${l}</button>`).join('')}</div></div>
+<div class="card flex">${I('users',20)}<div style="flex:1">Invite and earn</div><span class="chip y">100 coins</span></div>
+<button class="card flex" style="width:100%;font-family:inherit;text-align:left;cursor:pointer;color:var(--red)" data-act="restart">${I('back',18,'#D6453D')} Restart demo</button>
+</div>${nav()}`;
+R.helper=()=>`${bar('Approval chahiye')}<div class="scroll stack">
+<div class="card flex">${I('users',24,'#2F4C9E')}<div><div class="h3">Raju (helper) ne order banaya</div><div class="xs muted">11:20 am · parchi se</div></div></div>
+<div class="card stack">${[['brake_shoe|activa',3],['clutch_cable|pulsar150',2],['air_filter|shine',4]].map(([id,q])=>{const p=prod(id);return `<div class="flex">${PI(p.g,18)}<div style="flex:1" class="h3">${p.name} · ${p.model}</div><b>${q} × ${rs(p.price)}</b></div>`;}).join('')}</div>
+<div class="sm" style="color:var(--red)">₹2,000 ki limit se upar hai, isliye aapki approval chahiye</div>
+<div class="card flex between"><span>Total</span><b style="font-size:16px">₹2,080</b></div></div>
+<div class="foot stack"><button class="btn g" data-act="approve">${I('check',17,'#fff')} Approve ₹2,080</button><button class="btn o" data-act="back">Edit karein</button></div>`;
+
+// ================= RENDER & SIDE EFFECTS =================
+function render(){const el=document.getElementById('screen');el.innerHTML=(R[st.screen]||R.home)();after();}
+function after(){const s=st.screen;
+ if(s==='splash'){}
+ if(s==='home'){say(SP.home);st.homeVisits++;if(st.homeVisits===1)schedule('price',9000);if(st.homeVisits===3)schedule('reorder',7000);}
+ if(s==='kyc'||s==='kyc2')say(SP.kyc);
+ if(s==='voice'){say(SP.voice);setTimeout(()=>{if(st.screen==='voice')startRec();},1600);}
+ if(s==='camera'){say(st.camMode==='plate'?SP.camPlate:st.camMode==='parchi'?SP.cam:SP.camPart);startCam();}
+ if(s==='reading')say(SP.reading);
+ if(s==='cart'&&st.cart.length&&st.justBuilt){say(SP.cart(cartCount()));st.justBuilt=0;}
+ if(s==='network')runNetwork();
+ if(s==='pay')say(SP.pay);
+ if(s==='placed')say(SP.placed);
+ if(s==='track')runTrack();
+ if(s==='ret')say(SP.ret);if(s==='finder')say(SP.finder);
+ if(s==='profile')say(SP.profile);if(s==='orders')say(SP.orders);if(s==='cats')say(SP.cats);
+ if(s==='cat')say(TYPES[st.cat].name+(st.lang==='en'?'. Choose your bike.':' ke options. Apni gaadi chuniye.'));
+ if(s==='clarify'&&st.pending.length)say(st.pending[0].model==='splendor'?(st.lang==='en'?'Which Splendor?':'Splendor kaunsa hai?'):(st.lang==='en'?'For which bike?':'Kaunsi gaadi ka?'));
+ const q=document.querySelector('[data-enter]');if(q)q.addEventListener('keydown',e=>{if(e.key==='Enter'){if(q.dataset.enter==='search')handleText(q.value,'search');else handleText(q.value,'voice');}});
+ const gal=document.getElementById('gal');if(gal)gal.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{st.snap=r.result;shootDone();};r.readAsDataURL(f);};
+}
+
+// ----- voice recognition -----
+let rec=null,finalText='';
+function startRec(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const vs=document.getElementById('vstat');finalText='';
+ if(!SR){if(vs)vs.textContent='Is browser mein mic nahi chalta. Neeche sample tap karo ya likho.';stopWave();return;}
+ try{rec=new SR();rec.lang=LANGS[st.lang].sr;rec.interimResults=true;rec.continuous=true;
+  rec.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalText+=r[0].transcript+' ';else interim+=r[0].transcript;}const vt=document.getElementById('vtext');if(vt)vt.innerHTML=highlight(finalText+interim);};
+  rec.onerror=ev=>{if(vs)vs.textContent=ev.error==='not-allowed'?'Mic ki permission do, ya sample tap karo.':'Mic error: '+ev.error+'. Sample tap karo.';stopWave();};
+  rec.onend=()=>{stopWave();};
+  rec.start();}catch(e){if(vs)vs.textContent='Mic start nahi hua. Sample tap karo.';}}
+function stopRec(){try{rec&&rec.stop();}catch(e){}rec=null;}
+function stopWave(){const w=document.getElementById('wave');if(w)w.style.opacity=.25;const m=document.getElementById('micbtn');if(m)m.classList.remove('pulse');}
+function highlight(txt){const {items}=parse(txt);let h=txt;items.forEach(it=>{const s=it.src;if(s&&h.includes(s))h=h.replace(s,`<span class="hl">${s}</span>`);});return h||'…';}
+
+// ----- camera -----
+let stream=null;
+async function startCam(){const v=document.getElementById('vid');try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});v.srcObject=stream;}catch(e){document.getElementById('camfb').style.display='block';}}
+function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+function shoot(){const v=document.getElementById('vid');try{if(v&&v.videoWidth){const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);st.snap=c.toDataURL('image/jpeg',.6);}else st.snap=null;}catch(e){st.snap=null;}shootDone();}
+function shootDone(){stopCam();const m=st.camMode;
+ const el=document.getElementById('screen');el.insertAdjacentHTML('beforeend',`<div class="scrim" style="display:grid;place-items:center;z-index:45"><div class="card" style="text-align:center;width:220px"><div class="circ pulse" style="width:60px;height:60px;margin:0 auto;background:var(--blue2)">${I('spark',30,'#2F4C9E')}</div><div class="h3" style="margin-top:10px">AI dekh raha hai…</div></div></div>`);
+ setTimeout(()=>{
+  if(m==='parchi'){st.parchiText='Splender brek shoe - 2 set\n20W40 - 4 dabba\nCD Dlx chain set\nPulsar 150 clucth plate';go('reading');}
+  else if(m==='plate'){st.vehicle='splendor_plus';sheet(`<div class="h2">HR 51 AB 4821</div><div class="muted sm">Hero Splendor Plus · 2019 · 94% match</div><div class="h3" style="margin-top:12px">Is gaadi ke common parts</div>${['brake_shoe','chain_kit','air_filter','clutch_cable'].map(k=>{const p=prod(pid(k,'splendor_plus'));return `<div class="flex" style="margin-top:8px">${PI(p.g,20)}<div style="flex:1" class="sm"><b>${p.name}</b><br><span class="muted">${rs(p.price)}</span></div><button class="btn sm" data-act="add:${p.id}">Add</button></div>`;}).join('')}<button class="btn" style="margin-top:14px" data-act="closesheet:home">Is gaadi ke hisaab se dikhao</button>`);say(st.lang==='en'?'This is a Hero Splendor Plus, 2019.':'Yeh Hero Splendor Plus hai, 2019 model.');}
+  else {const id=m==='spare'?'clutch_plate|splendor_plus':'brake_shoe|splendor_plus';const p=prod(id);sheet(`<div class="flex">${PI(p.g,30)}<div><div class="h2">${p.name}</div><div class="muted sm">Fits ${p.model} · 92% match</div></div></div><div class="flex between" style="margin-top:12px"><b style="font-size:16px">${rs(p.price)}</b><span class="chip g">${I('clock',12)} 2 ghante</span></div><div class="xs muted" style="margin-top:6px">Galat laga? Doosre options: ${m==='spare'?'Super Splendor, Shine':'Super Splendor, CD Deluxe'}</div><button class="btn" style="margin-top:14px" data-act="add:${id}:cart">Cart mein daalo</button>`);say(st.lang==='en'?`This looks like a ${p.name} for ${p.model}.`:`Yeh ${p.model} ka ${p.name} lag raha hai.`);}
+ },1600);}
+function sheet(html){const el=document.getElementById('screen');el.querySelectorAll('.scrim,.sheet').forEach(n=>n.remove());el.insertAdjacentHTML('beforeend',`<div class="scrim" data-act="closesheet"></div><div class="sheet">${html}</div>`);}
+
+// ----- text → cart -----
+function handleText(txt,from){let {items}=parse(txt||'');
+ const miss=/nahi|nahin|\bnai\b|\bni\b|don'?t have|not available|nahi mil|नहीं|नही/i.test(txt||'');
+ if(!items.length){const nm=cleanName(txt||'');if(nm.length<3){if(miss||txt.trim()){st.finderSrc=txt.trim();st.history=['home'];go('finder',{push:false});return;}say(SP.notFound);return;}items=[{type:'custom',model:null,qty:1,src:txt.trim(),name:nm}];}
+ st.pending=[];let customN=0;items.forEach(it=>{if(it.type==='custom'){const id='custom|'+(Date.now()%100000)+'_'+(customN++);st.custom[id]={name:it.name,model:it.model&&MODELS[it.model]?it.model:null,price:450};addItem(id,it.qty,it.src);return;}if(TYPES[it.type].needModel&&(!it.model||it.model==='splendor'||!TYPES[it.type].price[it.model]))st.pending.push(it);else addItem(pid(it.type,TYPES[it.type].needModel?it.model:'any'),it.qty,it.src);});
+ st.justBuilt=1;st.history=['home'];st.tab='Home';if(customN||miss||st.cart.some(c=>prod(c.id).out))setTimeout(()=>say(SP.miss),2600);if(st.pending.length)go('clarify',{push:false});else go('cart',{push:false});}
+
+// ----- network animation -----
+function runNetwork(){say(SP.net);const steps=[[1200,2,'Jawab ka intezaar…',''],[2200,0,'Stock confirmed · fixed price','g'],[3000,1,'Stock hai · backup','b']];
+ steps.forEach(([ms,i,txt,c])=>st.timers.push(setTimeout(()=>{const s=document.getElementById('ds'+i),ch=document.getElementById('dc'+i);if(!s)return;s.textContent=txt;ch.className='chip '+c;ch.textContent=c?'✓':'…';if(i===0){document.getElementById('d0').style.borderColor='var(--green)';document.getElementById('netpick').style.display='flex';const b=document.getElementById('netbtn');b.disabled=false;b.textContent='Theek hai, aage badho';say(SP.netOk);}},ms)));}
+
+// ----- tracking -----
+function runTrack(){say(SP.track);const o=st.order;const path=document.getElementById('route');const rider=document.getElementById('rider');const L=path.getTotalLength();let k=o.prog||0;
+ const s1=o.netOnly?['Distributor ne confirm kiya','Pickup ho gaya','Rider raste mein','Pahunch gaya']:['Dark store pe pack hua','Dark store se nikla','Rider raste mein','Pahunch gaya'];const s2=['Distributor ne confirm kiya','4 baje pickup run','Raste mein','Pahunch gaya'];
+ const draw=()=>{const pt=path.getPointAtLength(L*Math.min(1,k/100));rider.setAttribute('transform',`translate(${pt.x},${pt.y})`);
+  const a=k<15?0:k<40?1:k<100?2:4;document.getElementById('tl1').innerHTML=s1.map((x,i)=>`<div class="st ${i<a?'done':i===a?'now':''}">${x}${i===a&&a<3?` · ${Math.max(1,Math.round((100-k)/5.5))} min`:''}</div>`).join('');
+  const eta=document.getElementById('eta');eta.textContent=k>=100?'Delivered ✓':`Rider · ${Math.max(1,Math.round((100-k)/5.5))} min`;
+  const t2=document.getElementById('tl2');if(t2){const b=o.delay?1:k<50?0:1;t2.innerHTML=s2.map((x,i)=>`<div class="st ${i<b?'done':i===b?'now':''}">${x}${i===1&&o.delay?' · <b style="color:var(--red)">5:30 (30 min late)</b>':''}</div>`).join('');}
+  if(k>=100){document.getElementById('retbtn').style.display='flex';}};
+ draw();st.timers.push(setInterval(()=>{if(k<100){k+=1.2;o.prog=k;draw();}
+  if(k>=22&&!o.n1){o.n1=1;toast(L3(NT.rider.t));}
+  if(k>=60&&o.d2.length&&!o.n2){o.n2=1;notify('delay',true);}
+  if(k>=100&&!o.n3){o.n3=1;toast('Delivery 1 pahunch gayi ✓');say(st.lang==='en'?'Delivered. Wrong part? Returns are free.':'Saamaan pahunch gaya. Galat part ho toh free return hai.');}},300));}
+
+// ================= EVENTS =================
+document.getElementById('phone').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;const [cmd,x,y]=a.split(':');
+ switch(cmd){
+ case 'go':if(y==='nohist'){st.history=[];st.tab='Home';}if(y==='fromplaced'){st.history=['home'];go(x,{push:false});break;}go(x,{push:y!=='nohist'});break;
+ case 'back':back();break;
+ case 'lang':st.lang=x;render();say(SP.lang);break;
+ case 'lang2':st.lang=x;render();say(SP.lang);break;
+ case 'sound':st.sound=!st.sound;if(!st.sound)speechSynthesis&&speechSynthesis.cancel();render();toast(st.sound?'Awaaz ON 🔊':'Awaaz OFF');break;
+ case 'tab':st.tab=y;st.history=[];go(x,{push:false});break;
+ case 'call':say(SP.call);st.tab='Home';go('voice');break;
+ case 'voice':go('voice');break;
+ case 'camera':st.camMode=x;go('camera');break;
+ case 'cmode':st.camMode=x;stopCam();render();break;
+ case 'shoot':shoot();break;
+ case 'mic':startRec();const w=document.getElementById('wave');if(w)w.style.opacity=1;b.classList.add('pulse');break;
+ case 'sample':{const vt=document.getElementById('vtext');finalText=b.dataset.text;vt.innerHTML=highlight(finalText);say(finalText);break;}
+ case 'vdone':{const typed=(document.getElementById('vtype')||{}).value;stopRec();handleText((finalText||'')+' '+(typed||''),'voice');break;}
+ case 'pdone':{const v=document.getElementById('ptext').value;handleText(v,'parchi');break;}
+ case 'pick':{const p=st.pending.shift();addItem(pid(p.type,x),p.qty,p.src);say(MODELS[x]);if(st.pending.length)render();else{st.justBuilt=1;go('cart',{push:false});}break;}
+ case 'cat':st.cat=x;go('cat');break;
+ case 'add':{if(!x.includes('|'))break;addItem(x,1);const p=prod(x);toast(`${p.name} add hua ✓`);say(st.lang==='en'?`${p.name} added.`:`${p.name} cart mein daal diya.`);const z=a.split(':')[2];if(z==='cart'){st.justBuilt=0;document.querySelectorAll('.scrim,.sheet').forEach(n=>n.remove());go('cart');}break;}
+ case 'qty':{const c=st.cart[+x];c.qty+=+y;if(c.qty<=0)st.cart.splice(+x,1);render();break;}
+ case 'brand':{st.cart[+x].brand=y;render();break;}
+ case 'checkout':if(st.cart.some(c=>prod(c.id).out))go('network');else go('pay');break;
+ case 'pm':st.pm=x;render();break;
+ case 'place':{const tt=totals();const d1=st.cart.filter(c=>!prod(c.id).out),d2=st.cart.filter(c=>prod(c.id).out);if((st.pm||'credit')==='credit')st.credit-=tt.total;const coins=Math.round(tt.total/100);st.coins+=coins;st.milestone=Math.min(5,st.milestone+1);const netOnly=!d1.length;st.order={netOnly,no:'PT-'+(58200+Math.floor(Math.random()*90)),d1:netOnly?d2:d1,d2:netOnly?[]:d2,total:tt.total,items:cartCount(),coins,prog:0};st.cart=[];st.history=[];go('placed',{push:false});break;}
+ case 'share':{const msg=`Namaste! Aapki bike ke parts raaste mein hain. Bike aaj 5:30 pm tak ready ho jayegi. Track: partnr.in/t/${st.order.no} · Rajesh Auto Works`;if(navigator.share){navigator.share({text:msg}).catch(()=>{});}else{navigator.clipboard&&navigator.clipboard.writeText(msg);}sheet(`<div class="h2">Customer ko yeh jayega</div><div class="card sm" style="background:#F1F8EE;border-color:#CFE6C7;margin-top:10px;line-height:1.5">${msg}</div><div class="xs muted" style="margin-top:6px">Customer ko sirf time dikhega, daam nahi. (Copied)</div><button class="btn g" style="margin-top:12px" data-act="closesheet">Bhej diya ✓</button>`);say(st.lang==='en'?'Message ready for your customer.':'Customer ke liye message tayyar hai.');break;}
+ case 'retdone':{const c=st.retItem||(st.order&&(st.order.d1[0]||st.order.d2[0]));st.lastReturn={name:prod(c.id).name,model:prod(c.id).model};if(st.order&&!st.retItem)st.order.returned=st.lastReturn;st.retItem=null;say(st.lang==='en'?'Return booked. Free pickup at 3 pm with the right part.':'Return book ho gaya. Teen baje rider sahi part lekar aayega aur galat wala le jayega.');go('retok',{push:false});break;}
+ case 'retpast':st.retItem={id:x==='oil'?'engine_oil|any':'brake_shoe|splendor_plus',qty:1,brand:x==='oil'?'Partnr':'Minda'};go('ret');break;
+ case 'closesheet':document.querySelectorAll('.scrim,.sheet').forEach(n=>n.remove());if(x==='home'){st.history=[];st.tab='Home';go('home',{push:false});}break;
+ case 'clearveh':st.vehicle=null;render();break;
+ case 'togglechip':b.classList.toggle('b');break;
+ case 'reorder':addItem('engine_oil|any',10,'Pichhla order: 10L 20W40');st.justBuilt=1;go('cart');break;
+ case 'demo':notify(x,true);break;
+ case 'fbike':st.fbike=x;{const v=document.getElementById('fname').value;render();document.getElementById('fname').value=v;}break;
+ case 'finddo':{const v=(document.getElementById('fname').value||'').trim();if(v.length<2){toast('Part ka naam likho ya photo bhejo');say(st.lang==='en'?'Please tell me the part name.':'Part ka naam bataiye.');break;}
+   const {items}=parse(v+(st.fbike&&st.fbike!=='other'?' '+MODELS[st.fbike]:''));const it=items[0];
+   if(it&&it.type!=='custom'){const m=st.fbike&&st.fbike!=='other'?st.fbike:it.model;if(!TYPES[it.type].needModel)addItem(pid(it.type,'any'),1,v);else if(m&&TYPES[it.type].price[m])addItem(pid(it.type,m),1,v);else{const id='custom|f'+Date.now()%100000;st.custom[id]={name:TYPES[it.type].name,model:MODELS[m]?m:null,price:450};addItem(id,1,v);}}
+   else{const id='custom|f'+Date.now()%100000;st.custom[id]={name:cleanName(v)||v,model:st.fbike&&MODELS[st.fbike]?st.fbike:null,price:450};addItem(id,1,v);}
+   st.fbike=null;st.finderSrc='';st.justBuilt=1;st.history=['home'];go('cart',{push:false});break;}
+ case 'approve':toast('Raju ka order approve ✓');say(st.lang==='en'?'Approved.':'Approve kar diya.');back();break;
+ case 'restart':location.reload();break;
+ case 'n':{document.getElementById('notif').classList.remove('show');
+   if(x==='addCastrol'){addItem('engine_oil|any',1,'Notification: Castrol offer','Castrol');st.justBuilt=1;go('cart');}
+   if(x==='reorder'){addItem('engine_oil|any',10,'Pichhla order: 10L 20W40');st.justBuilt=1;go('cart');}
+   if(x==='addShoe'){addItem('brake_shoe|splendor_plus',2,'Monsoon offer');st.justBuilt=1;go('cart');}
+   if(x==='addClutch'){addItem('clutch_plate|pulsar150',1,'Back in stock');st.justBuilt=1;go('cart');}
+   if(x==='track'&&st.order&&st.screen!=='track')go('track');
+   if(x==='delay'){if(st.order)st.order.delay=1;sheet(`<div class="flex">${I('alert',24,'#D6453D')}<div class="h2">Clutch plate 30 min late</div></div><div class="muted sm" style="margin-top:6px">Distributor pickup mein der. Naya time: <b style="color:var(--navy)">5:30 pm</b></div><div class="stack" style="margin-top:12px"><button class="btn" data-act="closesheet">5:30 tak ruk jaata hoon</button><button class="btn o" data-act="closesheet">Doosra distributor dhoondo</button><button class="btn r" data-act="closesheet">Sirf yeh part cancel karo</button></div><div class="xs muted" style="text-align:center;margin-top:8px">Customer ko naya time auto-bheja jayega ✓</div>`);}
+   if(x==='helper')go('helper');
+   break;}
+ }});
+
+// clock
+function tick(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});}tick();setInterval(tick,30000);
+render();
+// expose for testing
+window.__parse=parse;
+</script>
+</body>
+</html>
